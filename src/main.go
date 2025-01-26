@@ -12,7 +12,12 @@ func main() {
 	println("Hello")
 	println(os.Args[1])
 	fileName := os.Args[1]
-
+	riderFileName := os.Args[2]
+	rider, err := ReadRiderData(riderFileName)
+	if err != nil {
+		panic(err)
+	}
+	fmt.Println(rider)
 	file, err := os.Open(fileName)
 	if err != nil {
 		panic(err)
@@ -59,4 +64,18 @@ func main() {
 
 	fmt.Printf("max : %f\n", max)
 	fmt.Printf("Zero %d Over %d Under %d\n", zeroCount, overCount, underCount)
+}
+
+func ReadRiderData(fileName string) (*models.RIDER, error) {
+	file, err := os.Open(fileName)
+	if err != nil {
+		return nil, err
+	}
+	defer file.Close()
+	var rider models.RIDER
+	parser := json.NewDecoder(file)
+	if err = parser.Decode(&rider); err != nil {
+		return nil, err
+	}
+	return &rider, nil
 }

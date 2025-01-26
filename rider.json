@@ -1,0 +1,13 @@
+{
+    "name": "JD",
+    "birthdate": "1970-01-28T00:00:00.000-0600",
+    "weight": 90.0,
+    "attributes": [
+        {
+            "from_date": "2024-01-01T00:00:00.000-0600",
+            "ftp": 250,
+            "critical_power": 233,
+            "max_hr": 180
+        }
+    ]
+}

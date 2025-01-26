@@ -13,7 +13,8 @@
             "program": "src/main.go",
             "args": [
                 //"/home/jcdwyer/tmp/2024_12_22_07_38_04.json"
-                "${workspaceFolder}/test.json"
+                "${workspaceFolder}/test.json",
+                "${workspaceFolder}/rider.json"
                 ]
         }
     ]
