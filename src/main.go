@@ -35,7 +35,8 @@ func main() {
 	//fmt.Println(result.Ride.Tags)
 	var max float32
 	var powerRanges [100]uint64
-	ftp := float32(250.0)
+	ftp := float32(rider.Attributes[0].FTP)
+	wattRange := float32(rider.Attributes[0].FTP / 10)
 	overCount := uint64(0)
 	underCount := uint64(0)
 	zeroCount := uint64(0)
@@ -51,7 +52,7 @@ func main() {
 		} else {
 			underCount++
 		}
-		idx := int16(sample.Watts / 25)
+		idx := int16(sample.Watts / wattRange)
 		powerRanges[idx] = powerRanges[idx] + 1
 
 	}
@@ -77,5 +78,26 @@ func ReadRiderData(fileName string) (*models.RIDER, error) {
 	if err = parser.Decode(&rider); err != nil {
 		return nil, err
 	}
+	maxHr := rider.Attributes[0].MaxHR
+
+	rider.Attributes[0].HRZones = append(rider.Attributes[0].HRZones,
+		models.RIDER_ZONE{Min: 0, Max: uint32(float32(maxHr) * 0.5)},
+		models.RIDER_ZONE{Min: uint32(float32(maxHr)*0.5) + 1, Max: uint32(float32(maxHr) * 0.6)},
+		models.RIDER_ZONE{Min: uint32(float32(maxHr)*0.6) + 1, Max: uint32(float32(maxHr) * 0.7)},
+		models.RIDER_ZONE{Min: uint32(float32(maxHr)*0.7) + 1, Max: uint32(float32(maxHr) * 0.8)},
+		models.RIDER_ZONE{Min: uint32(float32(maxHr)*0.8) + 1, Max: uint32(float32(maxHr) * 0.9)},
+		models.RIDER_ZONE{Min: uint32(float32(maxHr)*0.9) + 1, Max: uint32(float32(maxHr) * 2.0)})
+	fmt.Print(rider.Attributes[0].HRZones)
+
+	ftp := rider.Attributes[0].FTP
+	rider.Attributes[0].PowerZones = append(rider.Attributes[0].PowerZones,
+		models.RIDER_ZONE{Min: 0, Max: uint32(float32(ftp) * 0.2)},
+		models.RIDER_ZONE{Min: uint32(float32(ftp)*0.2) + 1, Max: uint32(float32(ftp) * 0.5)},
+		models.RIDER_ZONE{Min: uint32(float32(ftp)*0.5) + 1, Max: uint32(float32(ftp) * 0.7)},
+		models.RIDER_ZONE{Min: uint32(float32(ftp)*0.7) + 1, Max: uint32(float32(ftp) * 0.85)},
+		models.RIDER_ZONE{Min: uint32(float32(ftp)*0.85) + 1, Max: uint32(float32(ftp) * 1.0)},
+		models.RIDER_ZONE{Min: uint32(float32(ftp)*1.0) + 1, Max: uint32(float32(ftp) * 1.15)},
+		models.RIDER_ZONE{Min: uint32(float32(ftp)*1.15) + 1, Max: uint32(float32(ftp) * 20.0)},
+	)
 	return &rider, nil
 }
