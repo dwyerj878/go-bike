@@ -2,7 +2,8 @@ package analysis
 
 import (
 	"bike/models"
-	"fmt"
+
+	log "github.com/sirupsen/logrus"
 )
 
 func SimpleAnalysis(rider *models.RIDER, ride *models.RIDE_DATA) {
@@ -14,7 +15,6 @@ func SimpleAnalysis(rider *models.RIDER, ride *models.RIDE_DATA) {
 	underCount := uint64(0)
 	zeroCount := uint64(0)
 	for _, sample := range ride.Ride.Samples {
-
 		if sample.Watts > max {
 			max = sample.Watts
 		}
@@ -27,16 +27,28 @@ func SimpleAnalysis(rider *models.RIDER, ride *models.RIDE_DATA) {
 		}
 		idx := int16(sample.Watts / wattRange)
 		powerRanges[idx] = powerRanges[idx] + 1
-
 	}
 	maxIdx := uint16(max / 25)
 	var i uint16
 	for i = 0; i < maxIdx; i++ {
-		fmt.Printf("range %d %d : count %d\n", i*25, i*25+25, powerRanges[i])
-
+		log.Debugf("range %d %d : count %d\n", i*25, i*25+25, powerRanges[i])
 	}
 
-	fmt.Printf("max : %f\n", max)
-	fmt.Printf("Zero %d Over %d Under %d\n", zeroCount, overCount, underCount)
+	log.Debugf("max : %f\n", max)
+	log.Debugf("Zero %d Over %d Under %d\n", zeroCount, overCount, underCount)
+}
 
+func Temperature(ride *models.RIDE_DATA) {
+	min := float32(500)
+	max := float32(0)
+	for _, sample := range ride.Ride.Samples {
+		if sample.Temp > max {
+			max = sample.Temp
+		}
+		if sample.Temp < min {
+			min = sample.Temp
+		}
+
+	}
+	log.Debugf("Tempt Min : %f  Max : %f", min, max)
 }
