@@ -80,24 +80,25 @@ func ReadRiderData(fileName string) (*models.RIDER, error) {
 	}
 	maxHr := rider.Attributes[0].MaxHR
 
-	rider.Attributes[0].HRZones = append(rider.Attributes[0].HRZones,
-		models.RIDER_ZONE{Min: 0, Max: uint32(float32(maxHr) * 0.5)},
-		models.RIDER_ZONE{Min: uint32(float32(maxHr)*0.5) + 1, Max: uint32(float32(maxHr) * 0.6)},
-		models.RIDER_ZONE{Min: uint32(float32(maxHr)*0.6) + 1, Max: uint32(float32(maxHr) * 0.7)},
-		models.RIDER_ZONE{Min: uint32(float32(maxHr)*0.7) + 1, Max: uint32(float32(maxHr) * 0.8)},
-		models.RIDER_ZONE{Min: uint32(float32(maxHr)*0.8) + 1, Max: uint32(float32(maxHr) * 0.9)},
-		models.RIDER_ZONE{Min: uint32(float32(maxHr)*0.9) + 1, Max: uint32(float32(maxHr) * 2.0)})
+	rider.Attributes[0].HRZones = []models.RIDER_ZONE{
+		{Min: 0, Max: uint32(float32(maxHr) * 0.5)},
+		{Min: uint32(float32(maxHr)*0.5) + 1, Max: uint32(float32(maxHr) * 0.6)},
+		{Min: uint32(float32(maxHr)*0.6) + 1, Max: uint32(float32(maxHr) * 0.7)},
+		{Min: uint32(float32(maxHr)*0.7) + 1, Max: uint32(float32(maxHr) * 0.8)},
+		{Min: uint32(float32(maxHr)*0.8) + 1, Max: uint32(float32(maxHr) * 0.9)},
+		{Min: uint32(float32(maxHr)*0.9) + 1, Max: uint32(float32(maxHr) * 2.0)},
+	}
 	fmt.Print(rider.Attributes[0].HRZones)
 
 	ftp := rider.Attributes[0].FTP
-	rider.Attributes[0].PowerZones = append(rider.Attributes[0].PowerZones,
-		models.RIDER_ZONE{Min: 0, Max: uint32(float32(ftp) * 0.2)},
-		models.RIDER_ZONE{Min: uint32(float32(ftp)*0.2) + 1, Max: uint32(float32(ftp) * 0.5)},
-		models.RIDER_ZONE{Min: uint32(float32(ftp)*0.5) + 1, Max: uint32(float32(ftp) * 0.7)},
-		models.RIDER_ZONE{Min: uint32(float32(ftp)*0.7) + 1, Max: uint32(float32(ftp) * 0.85)},
-		models.RIDER_ZONE{Min: uint32(float32(ftp)*0.85) + 1, Max: uint32(float32(ftp) * 1.0)},
-		models.RIDER_ZONE{Min: uint32(float32(ftp)*1.0) + 1, Max: uint32(float32(ftp) * 1.15)},
-		models.RIDER_ZONE{Min: uint32(float32(ftp)*1.15) + 1, Max: uint32(float32(ftp) * 20.0)},
-	)
+	rider.Attributes[0].PowerZones = []models.RIDER_ZONE{
+		{Min: 0, Max: uint32(float32(ftp) * 0.2)},
+		{Min: uint32(float32(ftp)*0.2) + 1, Max: uint32(float32(ftp) * 0.5)},
+		{Min: uint32(float32(ftp)*0.5) + 1, Max: uint32(float32(ftp) * 0.7)},
+		{Min: uint32(float32(ftp)*0.7) + 1, Max: uint32(float32(ftp) * 0.85)},
+		{Min: uint32(float32(ftp)*0.85) + 1, Max: uint32(float32(ftp) * 1.0)},
+		{Min: uint32(float32(ftp)*1.0) + 1, Max: uint32(float32(ftp) * 1.15)},
+		{Min: uint32(float32(ftp)*1.15) + 1, Max: uint32(float32(ftp) * 20.0)},
+	}
 	return &rider, nil
 }
