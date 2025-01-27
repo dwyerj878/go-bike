@@ -1,6 +1,7 @@
 package main
 
 import (
+	"bike/analysis"
 	"bike/models"
 	"encoding/json"
 	"fmt"
@@ -18,53 +19,31 @@ func main() {
 		panic(err)
 	}
 	fmt.Println(rider)
+
+	ride, err := ReadRide(fileName)
+	if err != nil {
+		panic(err)
+	}
+	analysis.SimpleAnalysis(rider, ride)
+	//fmt.Println(result.Ride.Tags)
+}
+
+func ReadRide(fileName string) (*models.RIDE_DATA, error) {
 	file, err := os.Open(fileName)
 	if err != nil {
-		panic(err)
+		return nil, err
 	}
 	defer file.Close()
-	//var result map[string]interface{}
-	var result models.RIDE_DATA
+	//var ride map[string]interface{}
+	var ride models.RIDE_DATA
 	decoder := json.NewDecoder(file)
 
-	err = decoder.Decode(&result)
+	err = decoder.Decode(&ride)
 	if err != nil {
-		panic(err)
+		return nil, err
 	}
-	fmt.Println(result)
-	//fmt.Println(result.Ride.Tags)
-	var max float32
-	var powerRanges [100]uint64
-	ftp := float32(rider.Attributes[0].FTP)
-	wattRange := float32(rider.Attributes[0].FTP / 10)
-	overCount := uint64(0)
-	underCount := uint64(0)
-	zeroCount := uint64(0)
-	for _, sample := range result.Ride.Samples {
-
-		if sample.Watts > max {
-			max = sample.Watts
-		}
-		if sample.Watts <= 1.0 {
-			zeroCount++
-		} else if sample.Watts >= ftp {
-			overCount++
-		} else {
-			underCount++
-		}
-		idx := int16(sample.Watts / wattRange)
-		powerRanges[idx] = powerRanges[idx] + 1
-
-	}
-	maxIdx := uint16(max / 25)
-	var i uint16
-	for i = 0; i < maxIdx; i++ {
-		fmt.Printf("range %d %d : count %d\n", i*25, i*25+25, powerRanges[i])
-
-	}
-
-	fmt.Printf("max : %f\n", max)
-	fmt.Printf("Zero %d Over %d Under %d\n", zeroCount, overCount, underCount)
+	fmt.Println(ride)
+	return &ride, nil
 }
 
 func ReadRiderData(fileName string) (*models.RIDER, error) {
