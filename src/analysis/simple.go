@@ -38,7 +38,7 @@ func SimpleAnalysis(rider *models.RIDER, ride *models.RIDE_DATA) {
 	log.Debugf("Zero %d Over %d Under %d\n", zeroCount, overCount, underCount)
 }
 
-func Temperature(ride *models.RIDE_DATA) {
+func Temperature(rider *models.RIDER, ride *models.RIDE_DATA) {
 	min := float32(500)
 	max := float32(0)
 	for _, sample := range ride.Ride.Samples {
@@ -48,7 +48,8 @@ func Temperature(ride *models.RIDE_DATA) {
 		if sample.Temp < min {
 			min = sample.Temp
 		}
-
 	}
 	log.Debugf("Tempt Min : %f  Max : %f", min, max)
+	ride.Analysis.MaxTemp = max
+	ride.Analysis.MinTemp = min
 }

@@ -1,7 +1,8 @@
 package models
 
 type RIDE_DATA struct {
-	Ride RIDE `json:"RIDE"`
+	Ride     RIDE          `json:"RIDE"`
+	Analysis RIDE_ANALYSIS `json:"Analysis"`
 }
 
 type RIDE struct {
@@ -53,4 +54,9 @@ type RIDE_TAGS struct {
 	Data                  string `json:"Data"`
 	Device                string `json:"Device"`
 	DeviceInfo            string `json:"Device Info"`
+}
+
+type RIDE_ANALYSIS struct {
+	MinTemp float32
+	MaxTemp float32
 }

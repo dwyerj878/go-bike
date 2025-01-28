@@ -39,7 +39,7 @@ func main() {
 	wg.Add(1)
 	go func(wg *sync.WaitGroup) {
 		defer wg.Done()
-		analysis.Temperature(ride)
+		analysis.Temperature(rider, ride)
 	}(&wg)
 
 	wg.Wait()
