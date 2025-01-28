@@ -1,0 +1,4 @@
+{
+    "go.coverOnSingleTest": true,
+    "go.coverShowCounts": true
+}

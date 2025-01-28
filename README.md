@@ -16,6 +16,8 @@ Initially it is using json format as exported by Golden Cheetah but the intent i
 - [ ] training effect
 - [ ] time in zones
 - [ ] graph output (https://github.com/gonum/plot) ?
+- [ ] implement test coverage (https://github.com/marketplace/actions/go-test-coverage)
+- [ ] implement trends and multi activity analysis
 
 ## NP Formula
 - Step 1: Calculate the rolling average power with a window size of 30 seconds. Start at 30s and calculate the average of the previous 30s and repeat this for every second.
