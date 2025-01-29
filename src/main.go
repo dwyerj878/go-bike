@@ -21,7 +21,7 @@ func main() {
 	log.Info(os.Args[1])
 	fileName := os.Args[1]
 	riderFileName := os.Args[2]
-	rider, err := rider.ReadRiderData(riderFileName)
+	activeRider, err := rider.ReadRiderData(riderFileName)
 	if err != nil {
 		log.Error(err)
 		panic(err)
@@ -32,24 +32,19 @@ func main() {
 		panic(err)
 	}
 	var wg sync.WaitGroup
-	wg.Add(1)
-	go func(wg *sync.WaitGroup) {
-		defer wg.Done()
-		analysis.ZoneTimes(rider, ride)
-	}(&wg)
+	t := []func(*rider.RIDER, *models.RIDE_DATA){
+		analysis.ZoneTimes,
+		analysis.FTPTimes,
+		analysis.Temperature,
+	}
+	for _, fnc := range t {
+		wg.Add(1)
+		go func(wg *sync.WaitGroup) {
+			defer wg.Done()
+			fnc(activeRider, ride)
+		}(&wg)
 
-	wg.Add(1)
-	go func(wg *sync.WaitGroup) {
-		defer wg.Done()
-		analysis.Temperature(rider, ride)
-	}(&wg)
-
-	wg.Add(1)
-	go func(wg *sync.WaitGroup) {
-		defer wg.Done()
-		analysis.FTPTimes(rider, ride)
-	}(&wg)
-
+	}
 	wg.Wait()
 	//fmt.Println(result.Ride.Tags)
 	b, err := json.MarshalIndent(ride.Analysis, "", "  ")
