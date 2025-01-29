@@ -20,4 +20,23 @@ func TestCreatePowerZones(t *testing.T) {
 }
 
 func TestCreateHRZones(t *testing.T) {
+	rider := RIDER{Attributes: []RIDER_ATTRIBUTES{{MaxHR: 200}}}
+	createHRZones(&rider)
+	if len(rider.Attributes[0].HRZones) != 6 {
+		t.Error("Incorrect number of zones")
+	}
+	hz := rider.Attributes[0].HRZones
+	expectations := [][]uint32{
+		{0, 100},
+		{101, 120},
+		{121, 140},
+		{141, 160},
+		{161, 180},
+		{181, 400},
+	}
+	for idx, expectation := range expectations {
+		if hz[idx].Min != expectation[0] || hz[idx].Max != expectation[1] {
+			t.Errorf("Power Zone %d not %d to %d : %d - %d", idx, expectation[0], expectation[1], hz[idx].Min, hz[idx].Max)
+		}
+	}
 }

@@ -36,6 +36,7 @@ func main() {
 		analysis.ZoneTimes,
 		analysis.FTPTimes,
 		analysis.Temperature,
+		analysis.MaxPower,
 	}
 	for _, fnc := range t {
 		wg.Add(1)

@@ -55,3 +55,14 @@ func Temperature(rider *rider.RIDER, ride *models.RIDE_DATA) {
 	ride.Analysis.MaxTemp = max
 	ride.Analysis.MinTemp = min
 }
+
+func MaxPower(rider *rider.RIDER, ride *models.RIDE_DATA) {
+	max := float32(0)
+	for _, sample := range ride.Ride.Samples {
+		if sample.Watts > max {
+			max = sample.Watts
+		}
+	}
+	log.Debugf("Max Watts :  Max : %f", max)
+	ride.Analysis.MaxWatts = max
+}

@@ -1,4 +1,6 @@
 {
     "go.coverOnSingleTest": true,
-    "go.coverShowCounts": true
+    "go.coverShowCounts": true,
+    "go.coverOnSingleTestFile": true,
+    "go.coverMode": "atomic"
 }

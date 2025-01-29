@@ -99,3 +99,23 @@ func TestZoneTimes(t *testing.T) {
 	}
 
 }
+
+func TestMaxPower(t *testing.T) {
+	log.Debug("Test FTP Times")
+	ride := models.RIDE_DATA{
+		Ride: models.RIDE{
+			Samples: []models.RIDE_SAMPLE{
+				{Watts: 1},
+				{Watts: 100},
+				{Watts: 99},
+				{Watts: 101},
+				{Watts: 0},
+				{Watts: 0.3},
+			},
+		},
+	}
+	MaxPower(nil, &ride)
+	if ride.Analysis.MaxWatts != 101 {
+		t.Error("Incorrect Max Watts")
+	}
+}
