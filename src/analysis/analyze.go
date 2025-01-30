@@ -9,11 +9,12 @@ import (
 func ExecuteAnalysis(activeRider *rider.RIDER, ride *models.RIDE_DATA) {
 	var wg sync.WaitGroup
 	analysisFunctions := []func(*rider.RIDER, *models.RIDE_DATA){
-		ZoneTimes,
+		PowerZoneTimes,
 		FTPTimes,
 		Temperature,
 		MaxPower,
 		NormalizedPower,
+		HRZoneTimes,
 	}
 	for _, fnc := range analysisFunctions {
 		wg.Add(1)

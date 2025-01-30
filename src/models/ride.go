@@ -57,23 +57,26 @@ type RIDE_TAGS struct {
 }
 
 type RIDE_ANALYSIS struct {
-	MinTemp  float64
-	MaxTemp  float64
-	MaxWatts float64
-	FTP      RIDE_ANALYSIS_FTP
-	ZONES    []RIDE_ANALYSIS_ZONE
-	NP       float64
+	MinTemp         float64              `json:"min_temp"`
+	MaxTemp         float64              `json:"max_temp"`
+	MaxWatts        float64              `json:"max_watts"`
+	FTP             RIDE_ANALYSIS_FTP    `json:"ftp"`
+	PowerZones      []RIDE_ANALYSIS_ZONE `json:"power_zones"`
+	HRZones         []RIDE_ANALYSIS_ZONE `json:"hr_zones"`
+	NormalizedPower float64              `json:"normalized_power"`
 }
 
 type RIDE_ANALYSIS_FTP struct {
-	Over  uint64
-	Under uint64
-	Zero  uint64
-	FTP   uint32
+	Over  uint64 `json:"over"`
+	Under uint64 `json:"under"`
+	Zero  uint64 `json:"zero"`
+	FTP   uint32 `json:"white"`
 }
 
 type RIDE_ANALYSIS_ZONE struct {
-	Zone    uint8
-	Count   uint64
-	Percent float64
+	Min     uint32  `json:"min"`
+	Max     uint32  `json:"max"`
+	Zone    uint8   `json:"zone"`
+	Count   uint64  `json:"count"`
+	Percent float64 `json:"percent"`
 }

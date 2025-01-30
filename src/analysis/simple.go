@@ -27,24 +27,24 @@ func FTPTimes(rider *rider.RIDER, ride *models.RIDE_DATA) {
 	ride.Analysis.FTP.Zero = zero
 }
 
-func ZoneTimes(rider *rider.RIDER, ride *models.RIDE_DATA) {
-	for zoneIdx, _ := range rider.Attributes[0].PowerZones {
-		ride.Analysis.ZONES = append(ride.Analysis.ZONES, models.RIDE_ANALYSIS_ZONE{Zone: uint8(zoneIdx + 1), Count: 0})
+func PowerZoneTimes(rider *rider.RIDER, ride *models.RIDE_DATA) {
+	for zoneIdx, zone := range rider.Attributes[0].PowerZones {
+		zoneData := models.RIDE_ANALYSIS_ZONE{Zone: uint8(zoneIdx + 1), Count: 0, Min: zone.Min, Max: zone.Max}
+		ride.Analysis.PowerZones = append(ride.Analysis.PowerZones, zoneData)
 	}
 	var sampleCount uint64
 	for _, sample := range ride.Ride.Samples {
 		for zoneIdx, zone := range rider.Attributes[0].PowerZones {
 			if sample.Watts >= float64(zone.Min) && sample.Watts <= float64(zone.Max) {
-				ride.Analysis.ZONES[zoneIdx].Count++
+				ride.Analysis.PowerZones[zoneIdx].Count++
 			}
 		}
 		sampleCount++
 	}
-	for idx, zone := range ride.Analysis.ZONES {
+	for idx, zone := range ride.Analysis.PowerZones {
 		pct := float64(zone.Count) / float64(sampleCount) * 100
-		ride.Analysis.ZONES[idx].Percent = pct
+		ride.Analysis.PowerZones[idx].Percent = pct
 	}
-
 }
 
 func Temperature(rider *rider.RIDER, ride *models.RIDE_DATA) {
@@ -72,4 +72,24 @@ func MaxPower(rider *rider.RIDER, ride *models.RIDE_DATA) {
 	}
 	log.Debugf("Max Watts :  Max : %f", max)
 	ride.Analysis.MaxWatts = max
+}
+
+func HRZoneTimes(rider *rider.RIDER, ride *models.RIDE_DATA) {
+	for zoneIdx, zone := range rider.Attributes[0].HRZones {
+		zoneData := models.RIDE_ANALYSIS_ZONE{Zone: uint8(zoneIdx + 1), Count: 0, Min: zone.Min, Max: zone.Max}
+		ride.Analysis.HRZones = append(ride.Analysis.HRZones, zoneData)
+	}
+	var sampleCount uint64
+	for _, sample := range ride.Ride.Samples {
+		for zoneIdx, zone := range rider.Attributes[0].HRZones {
+			if sample.Hr >= float64(zone.Min) && sample.Hr <= float64(zone.Max) {
+				ride.Analysis.HRZones[zoneIdx].Count++
+			}
+		}
+		sampleCount++
+	}
+	for idx, zone := range ride.Analysis.HRZones {
+		pct := float64(zone.Count) / float64(sampleCount) * 100
+		ride.Analysis.HRZones[idx].Percent = pct
+	}
 }

@@ -29,6 +29,6 @@ func NormalizedPower(rider *rider.RIDER, ride *models.RIDE_DATA) {
 	}
 	np := grandTotal / float64(counter)
 	np = math.Pow(np, 0.25)
-	ride.Analysis.NP = np
+	ride.Analysis.NormalizedPower = np
 
 }
