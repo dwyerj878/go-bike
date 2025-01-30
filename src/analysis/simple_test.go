@@ -3,6 +3,7 @@ package analysis
 import (
 	"bike/models"
 	"bike/rider"
+	"math"
 	"testing"
 
 	log "github.com/sirupsen/logrus"
@@ -95,6 +96,10 @@ func TestZoneTimes(t *testing.T) {
 	for idx := 0; idx < 7; idx++ {
 		if ride.Analysis.ZONES[idx].Count != 1 {
 			t.Errorf("Incorrect count for zone %d", idx+1)
+		}
+		expected := math.Trunc(100.0 / 7.0)
+		if math.Trunc(float64(ride.Analysis.ZONES[idx].Percent)) != expected {
+			t.Errorf("Incorrect pct for zone %d %f expected %f", idx, ride.Analysis.ZONES[idx].Percent, expected)
 		}
 	}
 

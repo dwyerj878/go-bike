@@ -8,7 +8,7 @@ import (
 )
 
 func FTPTimes(rider *rider.RIDER, ride *models.RIDE_DATA) {
-	ftp := float32(rider.Attributes[0].FTP)
+	ftp := float64(rider.Attributes[0].FTP)
 	over := uint64(0)
 	under := uint64(0)
 	zero := uint64(0)
@@ -31,18 +31,25 @@ func ZoneTimes(rider *rider.RIDER, ride *models.RIDE_DATA) {
 	for zoneIdx, _ := range rider.Attributes[0].PowerZones {
 		ride.Analysis.ZONES = append(ride.Analysis.ZONES, models.RIDE_ANALYSIS_ZONE{Zone: uint8(zoneIdx + 1), Count: 0})
 	}
+	var sampleCount uint64
 	for _, sample := range ride.Ride.Samples {
 		for zoneIdx, zone := range rider.Attributes[0].PowerZones {
-			if sample.Watts >= float32(zone.Min) && sample.Watts <= float32(zone.Max) {
+			if sample.Watts >= float64(zone.Min) && sample.Watts <= float64(zone.Max) {
 				ride.Analysis.ZONES[zoneIdx].Count++
 			}
 		}
+		sampleCount++
 	}
+	for idx, zone := range ride.Analysis.ZONES {
+		pct := float64(zone.Count) / float64(sampleCount) * 100
+		ride.Analysis.ZONES[idx].Percent = pct
+	}
+
 }
 
 func Temperature(rider *rider.RIDER, ride *models.RIDE_DATA) {
-	min := float32(500)
-	max := float32(0)
+	min := float64(500)
+	max := float64(0)
 	for _, sample := range ride.Ride.Samples {
 		if sample.Temp > max {
 			max = sample.Temp
@@ -57,7 +64,7 @@ func Temperature(rider *rider.RIDER, ride *models.RIDE_DATA) {
 }
 
 func MaxPower(rider *rider.RIDER, ride *models.RIDE_DATA) {
-	max := float32(0)
+	max := float64(0)
 	for _, sample := range ride.Ride.Samples {
 		if sample.Watts > max {
 			max = sample.Watts

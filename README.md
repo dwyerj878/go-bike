@@ -12,7 +12,7 @@ Initially it is using json format as exported by Golden Cheetah but the intent i
 - [x] load json gc file
 - [ ] load xml garmin file
 - [x] athlete data
-- [ ] normalized power
+- [x] normalized power
 - [ ] training effect
 - [ ] time in zones
 - [ ] graph output (https://github.com/gonum/plot) ?

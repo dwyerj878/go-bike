@@ -17,24 +17,24 @@ type RIDE struct {
 
 type RIDE_SAMPLE struct {
 	Secs  uint64  `json:"SECS"`
-	Km    float32 `json:"KM"`
-	Watts float32 `json:"WATTS"`
-	Cad   float32 `json:"CAD"`
-	Kph   float32 `json:"KPH"`
-	Hr    float32 `json:"HR"`
-	Alt   float32 `json:"ALT"`
-	Lat   float32 `json:"LAT"`
-	Long  float32 `json:"LON"`
-	Slope float32 `json:"SLOPE"`
-	Temp  float32 `json:"TEMP"`
-	Lppb  float32 `json:"LPPB"`
-	Rppb  float32 `json:"RPPB"`
-	Lppe  float32 `json:"LPPE"`
-	Rppe  float32 `json:"RPPE"`
-	Lpppb float32 `json:"LPPPB"`
-	Rpppb float32 `json:"RPPPB"`
-	Lpppe float32 `json:"LPPPE"`
-	Rpppe float32 `json:"RPPPE"`
+	Km    float64 `json:"KM"`
+	Watts float64 `json:"WATTS"`
+	Cad   float64 `json:"CAD"`
+	Kph   float64 `json:"KPH"`
+	Hr    float64 `json:"HR"`
+	Alt   float64 `json:"ALT"`
+	Lat   float64 `json:"LAT"`
+	Long  float64 `json:"LON"`
+	Slope float64 `json:"SLOPE"`
+	Temp  float64 `json:"TEMP"`
+	Lppb  float64 `json:"LPPB"`
+	Rppb  float64 `json:"RPPB"`
+	Lppe  float64 `json:"LPPE"`
+	Rppe  float64 `json:"RPPE"`
+	Lpppb float64 `json:"LPPPB"`
+	Rpppb float64 `json:"RPPPB"`
+	Lpppe float64 `json:"LPPPE"`
+	Rpppe float64 `json:"RPPPE"`
 }
 
 type RIDE_INTERVAL struct {
@@ -57,11 +57,12 @@ type RIDE_TAGS struct {
 }
 
 type RIDE_ANALYSIS struct {
-	MinTemp  float32
-	MaxTemp  float32
-	MaxWatts float32
+	MinTemp  float64
+	MaxTemp  float64
+	MaxWatts float64
 	FTP      RIDE_ANALYSIS_FTP
 	ZONES    []RIDE_ANALYSIS_ZONE
+	NP       float64
 }
 
 type RIDE_ANALYSIS_FTP struct {
@@ -72,6 +73,7 @@ type RIDE_ANALYSIS_FTP struct {
 }
 
 type RIDE_ANALYSIS_ZONE struct {
-	Zone  uint8
-	Count uint64
+	Zone    uint8
+	Count   uint64
+	Percent float64
 }
