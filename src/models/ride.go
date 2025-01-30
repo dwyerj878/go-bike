@@ -64,6 +64,7 @@ type RIDE_ANALYSIS struct {
 	PowerZones      []RIDE_ANALYSIS_ZONE `json:"power_zones"`
 	HRZones         []RIDE_ANALYSIS_ZONE `json:"hr_zones"`
 	NormalizedPower float64              `json:"normalized_power"`
+	AveragePower    float64              `json:"average_power"`
 }
 
 type RIDE_ANALYSIS_FTP struct {
