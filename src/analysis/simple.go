@@ -2,43 +2,45 @@ package analysis
 
 import (
 	"bike/models"
+	"bike/rider"
 
 	log "github.com/sirupsen/logrus"
 )
 
-func SimpleAnalysis(rider *models.RIDER, ride *models.RIDE_DATA) {
-	var max float32
-	var powerRanges [100]uint64
+func FTPTimes(rider *rider.RIDER, ride *models.RIDE_DATA) {
 	ftp := float32(rider.Attributes[0].FTP)
-	wattRange := float32(rider.Attributes[0].FTP / 10)
-	overCount := uint64(0)
-	underCount := uint64(0)
-	zeroCount := uint64(0)
+	over := uint64(0)
+	under := uint64(0)
+	zero := uint64(0)
 	for _, sample := range ride.Ride.Samples {
-		if sample.Watts > max {
-			max = sample.Watts
-		}
-		if sample.Watts <= 1.0 {
-			zeroCount++
+		if sample.Watts < 1.0 {
+			zero++
 		} else if sample.Watts >= ftp {
-			overCount++
+			over++
 		} else {
-			underCount++
+			under++
 		}
-		idx := int16(sample.Watts / wattRange)
-		powerRanges[idx] = powerRanges[idx] + 1
 	}
-	maxIdx := uint16(max / 25)
-	var i uint16
-	for i = 0; i < maxIdx; i++ {
-		log.Debugf("range %d %d : count %d\n", i*25, i*25+25, powerRanges[i])
-	}
-
-	log.Debugf("max : %f\n", max)
-	log.Debugf("Zero %d Over %d Under %d\n", zeroCount, overCount, underCount)
+	ride.Analysis.FTP.FTP = rider.Attributes[0].FTP
+	ride.Analysis.FTP.Over = over
+	ride.Analysis.FTP.Under = under
+	ride.Analysis.FTP.Zero = zero
 }
 
-func Temperature(rider *models.RIDER, ride *models.RIDE_DATA) {
+func ZoneTimes(rider *rider.RIDER, ride *models.RIDE_DATA) {
+	for zoneIdx, _ := range rider.Attributes[0].PowerZones {
+		ride.Analysis.ZONES = append(ride.Analysis.ZONES, models.RIDE_ANALYSIS_ZONE{Zone: uint8(zoneIdx + 1), Count: 0})
+	}
+	for _, sample := range ride.Ride.Samples {
+		for zoneIdx, zone := range rider.Attributes[0].PowerZones {
+			if sample.Watts >= float32(zone.Min) && sample.Watts <= float32(zone.Max) {
+				ride.Analysis.ZONES[zoneIdx].Count++
+			}
+		}
+	}
+}
+
+func Temperature(rider *rider.RIDER, ride *models.RIDE_DATA) {
 	min := float32(500)
 	max := float32(0)
 	for _, sample := range ride.Ride.Samples {
@@ -52,4 +54,15 @@ func Temperature(rider *models.RIDER, ride *models.RIDE_DATA) {
 	log.Debugf("Tempt Min : %f  Max : %f", min, max)
 	ride.Analysis.MaxTemp = max
 	ride.Analysis.MinTemp = min
+}
+
+func MaxPower(rider *rider.RIDER, ride *models.RIDE_DATA) {
+	max := float32(0)
+	for _, sample := range ride.Ride.Samples {
+		if sample.Watts > max {
+			max = sample.Watts
+		}
+	}
+	log.Debugf("Max Watts :  Max : %f", max)
+	ride.Analysis.MaxWatts = max
 }

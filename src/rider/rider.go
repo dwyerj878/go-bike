@@ -1,4 +1,4 @@
-package models
+package rider
 
 import "time"
 

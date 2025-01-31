@@ -57,6 +57,21 @@ type RIDE_TAGS struct {
 }
 
 type RIDE_ANALYSIS struct {
-	MinTemp float32
-	MaxTemp float32
+	MinTemp  float32
+	MaxTemp  float32
+	MaxWatts float32
+	FTP      RIDE_ANALYSIS_FTP
+	ZONES    []RIDE_ANALYSIS_ZONE
+}
+
+type RIDE_ANALYSIS_FTP struct {
+	Over  uint64
+	Under uint64
+	Zero  uint64
+	FTP   uint32
+}
+
+type RIDE_ANALYSIS_ZONE struct {
+	Zone  uint8
+	Count uint64
 }
