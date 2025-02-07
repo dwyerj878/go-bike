@@ -5,7 +5,7 @@ import "time"
 type RIDER struct {
 	Name       string             `json:"name"`
 	BirthDate  JsonTime           `json:"birthdate"`
-	Weight     float32            `json:"weight"`
+	Weight     float64            `json:"weight"`
 	Attributes []RIDER_ATTRIBUTES `json:"attributes"`
 }
 

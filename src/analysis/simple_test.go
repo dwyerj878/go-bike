@@ -3,6 +3,7 @@ package analysis
 import (
 	"bike/models"
 	"bike/rider"
+	"math"
 	"testing"
 
 	log "github.com/sirupsen/logrus"
@@ -61,7 +62,7 @@ func TestFTPTimes(t *testing.T) {
 	}
 }
 
-func TestZoneTimes(t *testing.T) {
+func TestPowerZoneTimes(t *testing.T) {
 	log.Debug("Test Zone Times")
 	ride := models.RIDE_DATA{
 		Ride: models.RIDE{
@@ -91,10 +92,14 @@ func TestZoneTimes(t *testing.T) {
 			},
 		},
 	}
-	ZoneTimes(&rider, &ride)
+	PowerZoneTimes(&rider, &ride)
 	for idx := 0; idx < 7; idx++ {
-		if ride.Analysis.ZONES[idx].Count != 1 {
+		if ride.Analysis.PowerZones[idx].Count != 1 {
 			t.Errorf("Incorrect count for zone %d", idx+1)
+		}
+		expected := math.Trunc(100.0 / 7.0)
+		if math.Trunc(float64(ride.Analysis.PowerZones[idx].Percent)) != expected {
+			t.Errorf("Incorrect pct for zone %d %f expected %f", idx, ride.Analysis.PowerZones[idx].Percent, expected)
 		}
 	}
 
@@ -118,4 +123,47 @@ func TestMaxPower(t *testing.T) {
 	if ride.Analysis.MaxWatts != 101 {
 		t.Error("Incorrect Max Watts")
 	}
+}
+
+func TestHeartRateZoneTimes(t *testing.T) {
+	log.Debug("Test Zone Times")
+	ride := models.RIDE_DATA{
+		Ride: models.RIDE{
+			Samples: []models.RIDE_SAMPLE{
+				{Hr: 1},
+				{Hr: 11},
+				{Hr: 30},
+				{Hr: 33},
+				{Hr: 44},
+				{Hr: 55},
+				{Hr: 100},
+			},
+		},
+	}
+	rider := rider.RIDER{
+		Attributes: []rider.RIDER_ATTRIBUTES{
+			{
+				HRZones: []rider.RIDER_ZONE{
+					{Min: 0, Max: 10},
+					{Min: 11, Max: 20},
+					{Min: 21, Max: 30},
+					{Min: 31, Max: 40},
+					{Min: 41, Max: 50},
+					{Min: 51, Max: 60},
+					{Min: 61, Max: 100},
+				},
+			},
+		},
+	}
+	HRZoneTimes(&rider, &ride)
+	for idx := 0; idx < 7; idx++ {
+		if ride.Analysis.HRZones[idx].Count != 1 {
+			t.Errorf("Incorrect count for zone %d", idx+1)
+		}
+		expected := math.Trunc(100.0 / 7.0)
+		if math.Trunc(float64(ride.Analysis.HRZones[idx].Percent)) != expected {
+			t.Errorf("Incorrect pct for zone %d %f expected %f", idx, ride.Analysis.PowerZones[idx].Percent, expected)
+		}
+	}
+
 }
