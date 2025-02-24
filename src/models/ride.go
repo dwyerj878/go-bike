@@ -16,25 +16,26 @@ type RIDE struct {
 }
 
 type RIDE_SAMPLE struct {
-	Secs  uint64  `json:"SECS"`
-	Km    float64 `json:"KM"`
-	Watts float64 `json:"WATTS"`
-	Cad   float64 `json:"CAD"`
-	Kph   float64 `json:"KPH"`
-	Hr    float64 `json:"HR"`
-	Alt   float64 `json:"ALT"`
-	Lat   float64 `json:"LAT"`
-	Long  float64 `json:"LON"`
-	Slope float64 `json:"SLOPE"`
-	Temp  float64 `json:"TEMP"`
-	Lppb  float64 `json:"LPPB"`
-	Rppb  float64 `json:"RPPB"`
-	Lppe  float64 `json:"LPPE"`
-	Rppe  float64 `json:"RPPE"`
-	Lpppb float64 `json:"LPPPB"`
-	Rpppb float64 `json:"RPPPB"`
-	Lpppe float64 `json:"LPPPE"`
-	Rpppe float64 `json:"RPPPE"`
+	Secs   uint64  `json:"SECS"`
+	Km     float64 `json:"KM"`
+	Watts  float64 `json:"WATTS"`
+	Cad    float64 `json:"CAD"`
+	Kph    float64 `json:"KPH"`
+	Hr     float64 `json:"HR"`
+	Alt    float64 `json:"ALT"`
+	Lat    float64 `json:"LAT"`
+	Long   float64 `json:"LON"`
+	Slope  float64 `json:"SLOPE"`
+	Temp   float64 `json:"TEMP"`
+	Lppb   float64 `json:"LPPB"`
+	Rppb   float64 `json:"RPPB"`
+	Lppe   float64 `json:"LPPE"`
+	Rppe   float64 `json:"RPPE"`
+	Lpppb  float64 `json:"LPPPB"`
+	Rpppb  float64 `json:"RPPPB"`
+	Lpppe  float64 `json:"LPPPE"`
+	Rpppe  float64 `json:"RPPPE"`
+	Torque float64 `json:"TORQUE"`
 }
 
 type RIDE_INTERVAL struct {
