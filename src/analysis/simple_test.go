@@ -1,6 +1,7 @@
-package analysis
+package analysis_test
 
 import (
+	"bike/analysis"
 	"bike/models"
 	"bike/rider"
 	"math"
@@ -20,7 +21,7 @@ func TestTemperature(t *testing.T) {
 			},
 		},
 	}
-	Temperature(nil, &ride)
+	analysis.Temperature(nil, &ride)
 	if ride.Analysis.MaxTemp != 100 {
 		t.Error("Max Temp")
 	}
@@ -50,7 +51,7 @@ func TestFTPTimes(t *testing.T) {
 			},
 		},
 	}
-	FTPTimes(&rider, &ride)
+	analysis.FTPTimes(&rider, &ride)
 	if ride.Analysis.FTP.Zero != 2 {
 		t.Error("Incorrect Zero Count")
 	}
@@ -92,7 +93,7 @@ func TestPowerZoneTimes(t *testing.T) {
 			},
 		},
 	}
-	PowerZoneTimes(&rider, &ride)
+	analysis.PowerZoneTimes(&rider, &ride)
 	for idx := 0; idx < 7; idx++ {
 		if ride.Analysis.PowerZones[idx].Count != 1 {
 			t.Errorf("Incorrect count for zone %d", idx+1)
@@ -119,7 +120,7 @@ func TestMaxPower(t *testing.T) {
 			},
 		},
 	}
-	MaxPower(nil, &ride)
+	analysis.MaxPower(nil, &ride)
 	if ride.Analysis.MaxWatts != 101 {
 		t.Error("Incorrect Max Watts")
 	}
@@ -155,7 +156,7 @@ func TestHeartRateZoneTimes(t *testing.T) {
 			},
 		},
 	}
-	HRZoneTimes(&rider, &ride)
+	analysis.HRZoneTimes(&rider, &ride)
 	for idx := 0; idx < 7; idx++ {
 		if ride.Analysis.HRZones[idx].Count != 1 {
 			t.Errorf("Incorrect count for zone %d", idx+1)

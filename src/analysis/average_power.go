@@ -18,7 +18,11 @@ func AveragePower(rider *rider.RIDER, ride *models.RIDE_DATA) {
 			counter++
 		}
 	}
-	ap := grandTotal / float64(counter)
-	ride.Analysis.AveragePower = ap
+	if counter == 0 || grandTotal == 0 {
+		ride.Analysis.AveragePower = 0
+	} else {
+		ap := grandTotal / float64(counter)
+		ride.Analysis.AveragePower = ap
+	}
 
 }

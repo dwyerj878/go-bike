@@ -17,6 +17,8 @@ func ExecuteAnalysis(activeRider *rider.RIDER, ride *models.RIDE_DATA) {
 		HRZoneTimes,
 		AveragePower,
 		AverageSpeed,
+		ZoneIntervals,
+		Torque,
 	}
 	for _, fnc := range analysisFunctions {
 		wg.Add(1)

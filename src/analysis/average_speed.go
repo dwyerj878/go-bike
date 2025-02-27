@@ -18,7 +18,10 @@ func AverageSpeed(rider *rider.RIDER, ride *models.RIDE_DATA) {
 			counter++
 		}
 	}
-	averageSpeed := grandTotal / float64(counter)
-	ride.Analysis.AverageSpeed = averageSpeed
-
+	if counter == 0 || grandTotal == 0 {
+		ride.Analysis.AverageSpeed = 0
+	} else {
+		averageSpeed := grandTotal / float64(counter)
+		ride.Analysis.AverageSpeed = averageSpeed
+	}
 }

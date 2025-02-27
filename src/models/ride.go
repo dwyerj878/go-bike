@@ -16,25 +16,26 @@ type RIDE struct {
 }
 
 type RIDE_SAMPLE struct {
-	Secs  uint64  `json:"SECS"`
-	Km    float64 `json:"KM"`
-	Watts float64 `json:"WATTS"`
-	Cad   float64 `json:"CAD"`
-	Kph   float64 `json:"KPH"`
-	Hr    float64 `json:"HR"`
-	Alt   float64 `json:"ALT"`
-	Lat   float64 `json:"LAT"`
-	Long  float64 `json:"LON"`
-	Slope float64 `json:"SLOPE"`
-	Temp  float64 `json:"TEMP"`
-	Lppb  float64 `json:"LPPB"`
-	Rppb  float64 `json:"RPPB"`
-	Lppe  float64 `json:"LPPE"`
-	Rppe  float64 `json:"RPPE"`
-	Lpppb float64 `json:"LPPPB"`
-	Rpppb float64 `json:"RPPPB"`
-	Lpppe float64 `json:"LPPPE"`
-	Rpppe float64 `json:"RPPPE"`
+	Secs   uint64  `json:"SECS"`
+	Km     float64 `json:"KM"`
+	Watts  float64 `json:"WATTS"`
+	Cad    float64 `json:"CAD"`
+	Kph    float64 `json:"KPH"`
+	Hr     float64 `json:"HR"`
+	Alt    float64 `json:"ALT"`
+	Lat    float64 `json:"LAT"`
+	Long   float64 `json:"LON"`
+	Slope  float64 `json:"SLOPE"`
+	Temp   float64 `json:"TEMP"`
+	Lppb   float64 `json:"LPPB"`
+	Rppb   float64 `json:"RPPB"`
+	Lppe   float64 `json:"LPPE"`
+	Rppe   float64 `json:"RPPE"`
+	Lpppb  float64 `json:"LPPPB"`
+	Rpppb  float64 `json:"RPPPB"`
+	Lpppe  float64 `json:"LPPPE"`
+	Rpppe  float64 `json:"RPPPE"`
+	Torque float64 `json:"TORQUE"`
 }
 
 type RIDE_INTERVAL struct {
@@ -57,15 +58,16 @@ type RIDE_TAGS struct {
 }
 
 type RIDE_ANALYSIS struct {
-	MinTemp         float64              `json:"min_temp"`
-	MaxTemp         float64              `json:"max_temp"`
-	MaxWatts        float64              `json:"max_watts"`
-	FTP             RIDE_ANALYSIS_FTP    `json:"ftp"`
-	PowerZones      []RIDE_ANALYSIS_ZONE `json:"power_zones"`
-	HRZones         []RIDE_ANALYSIS_ZONE `json:"hr_zones"`
-	NormalizedPower float64              `json:"normalized_power"`
-	AveragePower    float64              `json:"average_power"`
-	AverageSpeed    float64              `json:"average_speed"`
+	MinTemp         float64                       `json:"min_temp"`
+	MaxTemp         float64                       `json:"max_temp"`
+	MaxWatts        float64                       `json:"max_watts"`
+	FTP             RIDE_ANALYSIS_FTP             `json:"ftp"`
+	PowerZones      []RIDE_ANALYSIS_ZONE          `json:"power_zones"`
+	HRZones         []RIDE_ANALYSIS_ZONE          `json:"hr_zones"`
+	NormalizedPower float64                       `json:"normalized_power"`
+	AveragePower    float64                       `json:"average_power"`
+	AverageSpeed    float64                       `json:"average_speed"`
+	ZoneIntervals   []RIDE_ANALYSIS_ZONE_INTERVAL `json:"zone_intervals"`
 }
 
 type RIDE_ANALYSIS_FTP struct {
@@ -81,4 +83,9 @@ type RIDE_ANALYSIS_ZONE struct {
 	Zone    uint8   `json:"zone"`
 	Count   uint64  `json:"count"`
 	Percent float64 `json:"percent"`
+}
+
+type RIDE_ANALYSIS_ZONE_INTERVAL struct {
+	Zone    uint32 `json:"zone"`
+	Seconds uint32 `json:"seconds"`
 }
