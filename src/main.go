@@ -59,8 +59,8 @@ func httpserver(w http.ResponseWriter, _ *http.Request) {
 	line.SetGlobalOptions(
 		charts.WithInitializationOpts(opts.Initialization{Theme: types.ThemeWesteros}),
 		charts.WithTitleOpts(opts.Title{
-			Title:    "Line example in Westeros theme",
-			Subtitle: "Line chart rendered by the http server this time",
+			Title:    "Speed vs Power",
+			Subtitle: fmt.Sprintf("Ride data %s", currentRide.Ride.StartTime),
 		}),
 		charts.WithYAxisOpts(
 			opts.YAxis{
@@ -81,7 +81,7 @@ func httpserver(w http.ResponseWriter, _ *http.Request) {
 	}
 
 	// Put data into instance
-	line.SetXAxis([]string{"Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"}).
+	line.SetXAxis([]string{"0", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"}).
 		AddSeries("Power", power).
 		AddSeries("Speed", speed).
 		SetSeriesOptions(
