@@ -24,5 +24,21 @@ jobs:
     - name: Build
       run: cd src;go build -v ./...
 
-    - name: Test
-      run: cd src;go test -v ./...
+    - name: Test with Coverage
+      run: |
+        cd src
+        go test -v -coverprofile=coverage.out -covermode=atomic ./...
+
+    - name: Generate HTML Coverage Report
+      run: |
+        cd src
+        go tool cover -html=coverage.out -o coverage.html
+
+    - name: Upload Coverage Report
+      uses: actions/upload-artifact@v4
+      with:
+        name: coverage-report
+        path: src/coverage.html
+        retention-days: 7    
+
+
