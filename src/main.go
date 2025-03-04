@@ -46,9 +46,10 @@ func main() {
 		fmt.Printf("Analysis : %s", b)
 	}
 	currentRide = ride
-
+	log.Debug("http://127.0.0.1:8081/")
 	http.HandleFunc("/", httpserver)
 	http.ListenAndServe(":8081", nil)
+
 }
 
 func httpserver(w http.ResponseWriter, _ *http.Request) {
@@ -57,7 +58,8 @@ func httpserver(w http.ResponseWriter, _ *http.Request) {
 	line := charts.NewLine()
 	// set some global options like Title/Legend/ToolTip or anything else
 	line.SetGlobalOptions(
-		charts.WithInitializationOpts(opts.Initialization{Theme: types.ThemeWesteros}),
+
+		charts.WithInitializationOpts(opts.Initialization{Theme: types.ThemeInfographic, Width: "1200px", Height: "700px"}),
 		charts.WithTitleOpts(opts.Title{
 			Title:    "Speed vs Power",
 			Subtitle: fmt.Sprintf("Ride data %s", currentRide.Ride.StartTime),
@@ -67,10 +69,12 @@ func httpserver(w http.ResponseWriter, _ *http.Request) {
 				SplitNumber: 2,
 				Max:         currentRide.Analysis.MaxWatts,
 				Min:         0,
-			}), charts.WithXAxisOpts(
+			}),
+		charts.WithXAxisOpts(
 			opts.XAxis{
 				Max: length,
-			}))
+			}),
+	)
 
 	speed := make([]opts.LineData, length)
 	power := make([]opts.LineData, length)
