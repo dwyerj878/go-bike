@@ -24,5 +24,14 @@ jobs:
     - name: Build
       run: cd src;go build -v ./...
 
-    - name: Test
-      run: cd src;go test -v ./...
+    - name: Test with Coverage
+      run: |
+        cd src
+        go test -v -coverprofile=coverage.out -covermode=atomic ./...
+
+    - name: Upload Coverage to Codecov
+      uses: codecov/codecov-action@v3
+      with:
+        file: ./src/coverage.out
+        flags: unittests
+        fail_ci_if_error: true
