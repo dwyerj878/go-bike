@@ -47,12 +47,27 @@ func main() {
 	}
 	currentRide = ride
 	log.Debug("http://127.0.0.1:8081/")
-	http.HandleFunc("/", httpserver)
+
+	http.HandleFunc("/", static)
+	http.HandleFunc("/chart", chart)
+	http.HandleFunc("/data", getData)
 	http.ListenAndServe(":8081", nil)
 
 }
 
-func httpserver(w http.ResponseWriter, _ *http.Request) {
+func static(w http.ResponseWriter, r *http.Request) {
+	http.ServeFile(w, r, "../static/index.html")
+}
+
+func getData(w http.ResponseWriter, r *http.Request) {
+	b, err := json.MarshalIndent(currentRide.Analysis, "", "  ")
+	if err != nil {
+		log.Error(err)
+	}
+	w.Write(b)
+}
+
+func chart(w http.ResponseWriter, _ *http.Request) {
 	// create a new line instance
 	length := len(currentRide.Ride.Samples)
 	line := charts.NewLine()
