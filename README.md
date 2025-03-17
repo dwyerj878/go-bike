@@ -10,7 +10,8 @@ Initially it is using json format as exported by Golden Cheetah but the intent i
 
 ## TODO
 - [x] load json gc file
-- [ ] load xml garmin file
+- [ ] open zip file
+- [ ] load garmin .fit file
 - [x] athlete data
 - [x] normalized power
 - [ ] training effect
