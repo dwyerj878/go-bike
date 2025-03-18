@@ -19,6 +19,17 @@
 </head>
 
 <body>
+    <div>
+        <div id="file_name">
+            File : 
+            <script>
+                $.getJSON( "/filename", function( data, status, xhr ) {                                                                                           
+                        
+                        $("#file_name").text(data.file_name)
+                    });    
+            </script>
+        </div>
+    </div>
     <div id="tabs">
         <ul>
             <li><a href="#chart">Chart</a></li>

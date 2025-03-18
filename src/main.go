@@ -19,13 +19,14 @@ import (
 )
 
 var currentRide *models.RIDE_DATA
+var fileName string
 
 func main() {
 
 	log.SetLevel(log.DebugLevel)
 
 	log.Info(os.Args[1])
-	fileName := os.Args[1]
+	fileName = os.Args[1]
 	riderFileName := os.Args[2]
 	activeRider, err := rider.ReadRiderData(riderFileName)
 	if err != nil {
@@ -51,12 +52,17 @@ func main() {
 	http.HandleFunc("/", static)
 	http.HandleFunc("/chart", chart)
 	http.HandleFunc("/data", getData)
+	http.HandleFunc("/filename", getFilename)
 	http.ListenAndServe(":8081", nil)
 
 }
 
 func static(w http.ResponseWriter, r *http.Request) {
 	http.ServeFile(w, r, "../static/index.html")
+}
+
+func getFilename(w http.ResponseWriter, r *http.Request) {
+	w.Write([]byte("{ \"file_name\" : \"" + fileName + "\" }"))
 }
 
 func getData(w http.ResponseWriter, r *http.Request) {
