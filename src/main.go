@@ -49,7 +49,9 @@ func main() {
 	currentRide = ride
 	log.Debug("http://127.0.0.1:8081/")
 
-	http.HandleFunc("/", static)
+	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) { http.ServeFile(w, r, "../static/index.html") })
+	http.HandleFunc("/style.css", func(w http.ResponseWriter, r *http.Request) { http.ServeFile(w, r, "../static/style.css") })
+	http.HandleFunc("/images/", getImage)
 	http.HandleFunc("/chart", chart)
 	http.HandleFunc("/data", getData)
 	http.HandleFunc("/filename", getFilename)
@@ -57,8 +59,9 @@ func main() {
 
 }
 
-func static(w http.ResponseWriter, r *http.Request) {
-	http.ServeFile(w, r, "../static/index.html")
+func getImage(w http.ResponseWriter, r *http.Request) {
+
+	http.ServeFile(w, r, "../static/"+r.URL.Path[1:])
 }
 
 func getFilename(w http.ResponseWriter, r *http.Request) {

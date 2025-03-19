@@ -2,6 +2,8 @@
 
 <head>
     <title>Go Bike</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+    <link rel="stylesheet" type="text/css" href="style.css" />
     <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
     <script src="https://code.jquery.com/ui/1.14.1/jquery-ui.js"></script>
 
@@ -13,74 +15,101 @@
             console.log("ready")
             $("#tabs").tabs();
         });
-        
+
     </script>
 
 </head>
 
 <body>
-    <div>
-        <div id="file_name">
-            File : 
-            <script>
-                $.getJSON( "/filename", function( data, status, xhr ) {                                                                                           
-                        
+    <div id="header">
+        <h1><span class="heading_color">GoBike</span> Racing</h1>
+    </div>
+
+    <div id="header_menu">
+        <ul class="navlist">
+            <li><a href="#">Log in</a></li>
+            <li><a href="#">Sign up!</a></li>
+        </ul>
+    </div>
+
+    <div id="container">
+        <div id="left">
+       
+            <h4>Menu</h4>
+            <div id="navcontainer">
+                <ul id="navlist">
+                    <li id="active"><a href="#" id="current">Home</a></li>
+                    <li><a href="#">Item two</a></li>
+                    <li><a href="#">Item three</a></li>
+                    <li><a href="#">Item four</a></li>
+                    <li><a href="#">Item five</a></li>
+                </ul>
+            </div>
+        </div>
+        <div id="right"><img src="images/demo_car_1.jpg" alt="" width="48" height="48" class="thumbs" /><img
+                src="images/demo_car_2.jpg" alt="" width="48" height="48" class="thumbs" /><img
+                src="images/demo_car_1.jpg" alt="" width="48" height="48" class="thumbs" /><img
+                src="images/demo_car_1.jpg" alt="" width="48" height="48" class="thumbs" /><img
+                src="images/demo_car_2.jpg" alt="" width="48" height="48" class="thumbs" /><img
+                src="images/demo_car_1.jpg" alt="" width="48" height="48" class="thumbs" /><img
+                src="images/demo_car_1.jpg" alt="" width="48" height="48" class="thumbs" /><img
+                src="images/demo_car_2.jpg" alt="" width="48" height="48" class="thumbs" /><img
+                src="images/demo_car_1.jpg" alt="" width="48" height="48" class="thumbs" /></div>
+        <div id="content">
+            <div id="tabs">
+                <ul>
+                    <li><a href="#chart">Chart</a></li>
+                    <li><a href="#data">Data</a></li>
+                    <li><a href="#tabs-3">Aenean lacinia</a></li>
+                </ul>
+
+                <div id="chart">
+                    <div id="chart_content">
+                        <script>
+                            $("#chart_content").load("/chart", function (response, status, xhr) {
+                                console.log("loading chart")
+                                if (status === "error") {
+                                    var msg = "Sorry but there was an error: ";
+                                    console.log(msg + xhr.status + " " + xhr.statusText);
+                                }
+                            });
+
+                        </script>
+
+                    </div>
+                </div>
+                <div id="data">
+                    <div id="data_content">
+                        <script>
+                            console.log("loading data")
+                            $.getJSON("/data", function (data, status, xhr) {
+                                console.log("loading data " + status)
+                                str = JSON.stringify(data)
+                                console.log(str)
+                                $("#data_content").text(str)
+                            });                        
+                        </script>
+
+                    </div>
+
+                </div>
+                <div id="tabs-3">
+                    
+                </div>
+            </div>
+        </div>
+        <div id="footer">
+            <div id="file_name">        
+                <script>
+                    $.getJSON("/filename", function (data, status, xhr) {
                         $("#file_name").text(data.file_name)
                     });    
-            </script>
+                </script>
+            </div>
+
         </div>
     </div>
-    <div id="tabs">
-        <ul>
-            <li><a href="#chart">Chart</a></li>
-            <li><a href="#data">Data</a></li>
-            <li><a href="#tabs-3">Aenean lacinia</a></li>
-        </ul>
 
-        <div id="chart">
-            <div id="chart_content">
-                <script>
-                    $("#chart_content").load("/chart", function (response, status, xhr) {
-                        console.log("loading chart")
-                        if (status === "error") {
-                            var msg = "Sorry but there was an error: ";
-                            console.log(msg + xhr.status + " " + xhr.statusText);
-                        }
-                    });
-            
-                    </script>
-
-            </div>          
-        </div>
-        <div id="data">
-            <div id="data_content">
-                <script>
-                    console.log("loading data")
-                    $.getJSON( "/data", function( data, status, xhr ) {                                           
-                        console.log("loading data " + status)
-                        str = JSON.stringify(data)
-                        console.log(str)
-                        $("#data_content").text(str)
-                    });                        
-                    </script>
-
-            </div>          
-
-        </div>
-        <div id="tabs-3">
-            <p>Mauris eleifend est et turpis. Duis id erat. Suspendisse potenti. Aliquam vulputate, pede vel vehicula
-                accumsan, mi neque rutrum erat, eu congue orci lorem eget lorem. Vestibulum non ante. Class aptent
-                taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Fusce sodales. Quisque eu
-                urna vel enim commodo pellentesque. Praesent eu risus hendrerit ligula tempus pretium. Curabitur lorem
-                enim, pretium nec, feugiat nec, luctus a, lacus.</p>
-            <p>Duis cursus. Maecenas ligula eros, blandit nec, pharetra at, semper at, magna. Nullam ac lacus. Nulla
-                facilisi. Praesent viverra justo vitae neque. Praesent blandit adipiscing velit. Suspendisse potenti.
-                Donec mattis, pede vel pharetra blandit, magna ligula faucibus eros, id euismod lacus dolor eget odio.
-                Nam scelerisque. Donec non libero sed nulla mattis commodo. Ut sagittis. Donec nisi lectus, feugiat
-                porttitor, tempor ac, tempor vitae, pede. Aenean vehicula velit eu tellus interdum rutrum. Maecenas
-                commodo. Pellentesque nec elit. Fusce in lacus. Vivamus a libero vitae lectus hendrerit hendrerit.</p>
-        </div>
-    </div>
 </body>
 
 </html>
