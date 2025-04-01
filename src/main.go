@@ -20,52 +20,101 @@ import (
 
 var currentRide *models.RIDE_DATA
 var fileName string
+var dataDirectory string
+var activeRider *rider.RIDER
 
 func main() {
 
 	log.SetLevel(log.DebugLevel)
+	log.SetFormatter(
+		&log.TextFormatter{
+			FullTimestamp: true,
+			ForceColors:   true,
+			PadLevelText:  true,
+		})
+	log.SetReportCaller(true)
 
 	log.Info(os.Args[1])
 	fileName = os.Args[1]
 	riderFileName := os.Args[2]
-	activeRider, err := rider.ReadRiderData(riderFileName)
+	dataDirectory = os.Args[3]
+	loadedRider, err := rider.ReadRiderData(riderFileName)
 	if err != nil {
 		log.Error(err)
 		panic(err)
 	}
-
+	activeRider = loadedRider
 	ride, err := models.Read(fileName)
 	if err != nil {
 		panic(err)
 	}
 	analysis.ExecuteAnalysis(activeRider, ride)
-	b, err := json.MarshalIndent(ride.Analysis, "", "  ")
-	if err != nil {
-		log.Error(err)
-	} else {
-		log.Infof("Analysis : %s", b)
-		fmt.Printf("Analysis : %s", b)
-	}
 	currentRide = ride
 	log.Debug("http://127.0.0.1:8081/")
 
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) { http.ServeFile(w, r, "../static/index.html") })
 	http.HandleFunc("/style.css", func(w http.ResponseWriter, r *http.Request) { http.ServeFile(w, r, "../static/style.css") })
 	http.HandleFunc("/images/", getImage)
+	http.HandleFunc("/favicon.ico", getImage)
 	http.HandleFunc("/chart", chart)
 	http.HandleFunc("/data", getData)
 	http.HandleFunc("/filename", getFilename)
+	http.HandleFunc("/datafiles", getFileList)
+	log.Info("Starting server")
 	http.ListenAndServe(":8081", nil)
 
 }
 
 func getImage(w http.ResponseWriter, r *http.Request) {
-
+	log.Debug(r.URL.Path[1:])
 	http.ServeFile(w, r, "../static/"+r.URL.Path[1:])
 }
 
+func getFileList(w http.ResponseWriter, r *http.Request) {
+	dirEntries, err := os.ReadDir(dataDirectory)
+	if err != nil {
+		log.Error(err)
+		w.Write([]byte(fmt.Sprintf("{\"error\" : \"%s\"}", err)))
+	}
+	filenames := []string{}
+	for _, entry := range dirEntries {
+		filenames = append(filenames, entry.Name())
+	}
+	out, err := json.MarshalIndent(filenames, "", "  ")
+	if err != nil {
+		log.Error(err)
+		w.Write([]byte(fmt.Sprintf("{\"error\" : \"%s\"}", err)))
+	}
+	w.Write(out)
+}
+
 func getFilename(w http.ResponseWriter, r *http.Request) {
-	w.Write([]byte("{ \"file_name\" : \"" + fileName + "\" }"))
+	if r.Method == http.MethodGet {
+		log.Debugf("Getting filename %s", fileName)
+		w.Write([]byte("{ \"file_name\" : \"" + fileName + "\" }"))
+		return
+	}
+
+	if r.Method == http.MethodPost {
+		var request models.LoadRideRequest
+		decoder := json.NewDecoder(r.Body)
+		if err := decoder.Decode(&request); err != nil {
+			log.Error(err)
+			return
+		}
+		fileName = request.Filename
+		if fileName == "" {
+			return
+		}
+		log.Debugf("Setting filename %s/%s", dataDirectory, fileName)
+		fullName := fmt.Sprintf("%s/%s", dataDirectory, fileName)
+		ride, err := models.Read(fullName)
+		if err != nil {
+			panic(err)
+		}
+		analysis.ExecuteAnalysis(activeRider, ride)
+		currentRide = ride
+	}
 }
 
 func getData(w http.ResponseWriter, r *http.Request) {

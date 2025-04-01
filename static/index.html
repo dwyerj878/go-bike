@@ -16,14 +16,30 @@
             $("#tabs").tabs();
         });
         function show_page(page) {
-            if (page == "activities") {
+            if (page == "home") {
+                $("#home").show()
+                $("#activity").hide()
+                $("#workout").hide()
+
+            } else if (page == "activity") {
+                $("#home").hide()
                 $("#activity").show()
                 $("#workout").hide()
             } else {
+                $("#home").hide()
                 $("#activity").hide()
                 $("#workout").show()
             }
-            
+
+        }
+        function read_file(filename) {
+            console.log("reading file [" + filename + "]")
+            $.post("/filename", JSON.stringify({ file_name: filename }), function (data, status, xhr) {
+                $.getJSON("/filename", function (data, status, xhr) {
+                    $("#file_name").text(data.file_name)
+                });
+            })
+
         }
 
     </script>
@@ -48,75 +64,93 @@
             <h4>Menu</h4>
             <div id="navcontainer">
                 <ul id="navlist">
-                    <li id="active"><a href="#" id="current">Home</a></li>
-                    <li><a href="#" onclick="show_page('activities')">Activities</a></li>
+                    <li id="active"><a href="#" id="current" onclick="show_page('home')">Home</a></li>
+                    <li><a href="#" onclick="show_page('activity')">Activity</a></li>
                     <li><a href="#" onClick="show_page('workout')"">Workout</a></li>
-                    <li><a href="#">Item four</a></li>
+                    <li><a href=" #">Item four</a></li>
                     <li><a href="#">Item five</a></li>
                 </ul>
             </div>
         </div>
-        <div id="right"><img src="images/demo_car_1.jpg" alt="" width="48" height="48" class="thumbs" /><img
-                src="images/demo_car_2.jpg" alt="" width="48" height="48" class="thumbs" /><img
-                src="images/demo_car_1.jpg" alt="" width="48" height="48" class="thumbs" /><img
-                src="images/demo_car_1.jpg" alt="" width="48" height="48" class="thumbs" /><img
-                src="images/demo_car_2.jpg" alt="" width="48" height="48" class="thumbs" /><img
-                src="images/demo_car_1.jpg" alt="" width="48" height="48" class="thumbs" /><img
-                src="images/demo_car_1.jpg" alt="" width="48" height="48" class="thumbs" /><img
-                src="images/demo_car_2.jpg" alt="" width="48" height="48" class="thumbs" /><img
-                src="images/demo_car_1.jpg" alt="" width="48" height="48" class="thumbs" /></div>
+        <div id="right"><img src="images/bike1.png" alt="" width="255" height="200" class="thumbs" />
+        </div>
         <div id="content">
-            <div id="activity">
-            <div id="tabs">
-                <ul style="height: 30;">
-                    <li><a href="#chart">Chart</a></li>
-                    <li><a href="#data">Data</a></li>
-                    <li><a href="#tabs-3">Aenean lacinia</a></li>
-                </ul>
+            <div id="home">
+                <script>
+                    $.getJSON("/datafiles", function (data, status, xhr) {
+                        for (var i = 0; i < data.length; i++) {
+                            var table = $("#files_list")
+                            var cell = $("<tr><td style='border: 1px solid black' ><a onclick='read_file(\"" + data[i] + "\")'>" + data[i] + "</a></td></tr>")
+                            table.append(cell);
+                        }
+                    });    
+                </script>
+                <div id="home_content">
+                    <table id="files_list" class="table" style="width: 100%; border: 1px solid black;">
+                        <thead>
+                            <tr>
+                                <td>file</td>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
 
-                <div id="tabs-1">
-                    <div id="chart">
-                        <div id="chart_content">
-                            <script>
-                                $("#chart_content").load("/chart", function (response, status, xhr) {
-                                    console.log("loading chart")
-                                    if (status === "error") {
-                                        var msg = "Sorry but there was an error: ";
-                                        console.log(msg + xhr.status + " " + xhr.statusText);
-                                    }
-                                });
+            </div>
 
-                            </script>
+
+
+            <div id="activity" hidden="true">
+                <div id="tabs">
+                    <ul style="height: 30;">
+                        <li><a href="#chart">Chart</a></li>
+                        <li><a href="#data">Data</a></li>
+                        <li><a href="#tabs-3">Aenean lacinia</a></li>
+                    </ul>
+
+                    <div id="tabs-1">
+                        <div id="chart">
+                            <div id="chart_content">
+                                <script>
+                                    $("#chart_content").load("/chart", function (response, status, xhr) {
+                                        console.log("loading chart")
+                                        if (status === "error") {
+                                            var msg = "Sorry but there was an error: ";
+                                            console.log(msg + xhr.status + " " + xhr.statusText);
+                                        }
+                                    });
+
+                                </script>
+
+                            </div>
+                        </div>
+                        <div id="data">
+                            <div id="data_content">
+                                <script>
+                                    console.log("loading data")
+                                    $.getJSON("/data", function (data, status, xhr) {
+                                        console.log("loading data " + status)
+                                        str = JSON.stringify(data)
+                                        console.log(str)
+                                        $("#data_content").text(str)
+                                    });                        
+                                </script>
+
+                            </div>
 
                         </div>
-                    </div>
-                    <div id="data">
-                        <div id="data_content">
-                            <script>
-                                console.log("loading data")
-                                $.getJSON("/data", function (data, status, xhr) {
-                                    console.log("loading data " + status)
-                                    str = JSON.stringify(data)
-                                    console.log(str)
-                                    $("#data_content").text(str)
-                                });                        
-                            </script>
+                        <div id="tabs-3">
 
                         </div>
-
-                    </div>
-                    <div id="tabs-3">
-
                     </div>
                 </div>
-            </div>
-        
 
-        </div>
-        <div id="workout" style="height: 300;">
+
             </div>
-        
-            
+            <div id="workout" style="height: 300;">
+            </div>
+
+
         </div>
         <div id="footer">
             <div id="file_name">

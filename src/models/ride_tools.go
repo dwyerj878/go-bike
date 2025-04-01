@@ -70,16 +70,16 @@ func readFitFile(fileName string) (*RIDE_DATA, error) {
 		return nil, fmt.Errorf("error opening file: %s %s", fileName, err.Error())
 	}
 
-	fmt.Printf("FileHeader DataSize: %d\n", fit.FileHeader.DataSize)
-	fmt.Printf("Messages count: %d\n", len(fit.Messages))
+	log.Printf("FileHeader DataSize: %d\n", fit.FileHeader.DataSize)
+	log.Printf("Messages count: %d\n", len(fit.Messages))
 	// FileId is always the first message; 4 = activity
-	fmt.Printf("File Type: %v\n", fit.Messages[0].FieldValueByNum(fieldnum.FileIdType).Any())
+	log.Printf("File Type: %v\n", fit.Messages[0].FieldValueByNum(fieldnum.FileIdType).Any())
 
 	activity := filedef.NewActivity(fit.Messages...)
 
-	fmt.Printf("Sessions count: %d\n", len(activity.Sessions))
-	fmt.Printf("Laps count: %d\n", len(activity.Laps))
-	fmt.Printf("Records count: %d\n", len(activity.Records))
+	log.Printf("Sessions count: %d\n", len(activity.Sessions))
+	log.Printf("Laps count: %d\n", len(activity.Laps))
+	log.Printf("Records count: %d\n", len(activity.Records))
 
 	for _, record := range activity.Records {
 		sample := RIDE_SAMPLE{
