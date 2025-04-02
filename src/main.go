@@ -2,6 +2,7 @@ package main
 
 import (
 	"bike/analysis"
+	"bike/files"
 	"bike/models"
 	"bike/rider"
 	"encoding/json"
@@ -71,15 +72,12 @@ func getImage(w http.ResponseWriter, r *http.Request) {
 }
 
 func getFileList(w http.ResponseWriter, r *http.Request) {
-	dirEntries, err := os.ReadDir(dataDirectory)
+	filenames, err := files.GetFileList(dataDirectory)
 	if err != nil {
 		log.Error(err)
 		w.Write([]byte(fmt.Sprintf("{\"error\" : \"%s\"}", err)))
 	}
-	filenames := []string{}
-	for _, entry := range dirEntries {
-		filenames = append(filenames, entry.Name())
-	}
+
 	out, err := json.MarshalIndent(filenames, "", "  ")
 	if err != nil {
 		log.Error(err)
