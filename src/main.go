@@ -5,8 +5,10 @@ import (
 	"bike/files"
 	"bike/models"
 	"bike/rider"
+	"encoding/base64"
 	"encoding/json"
 	"fmt"
+	"strings"
 
 	"net/http"
 
@@ -23,6 +25,13 @@ var currentRide *models.RIDE_DATA
 var fileName string
 var dataDirectory string
 var activeRider *rider.RIDER
+var allowedUsers map[string]string
+
+func init() {
+	allowedUsers = make(map[string]string)
+	allowedUsers["admin"] = "password"
+	allowedUsers["user"] = "password"
+}
 
 func main() {
 
@@ -71,7 +80,39 @@ func getImage(w http.ResponseWriter, r *http.Request) {
 	http.ServeFile(w, r, "../static/"+r.URL.Path[1:])
 }
 
+func Authenticate(r *http.Request) bool {
+	auth := r.Header.Get("Authorization")
+	if auth == "" {
+		log.Info("No credentials supplied")
+		return false
+	}
+	authParts := strings.Split(auth, " ")
+	if len(authParts) != 2 {
+		log.Info("No credentials supplied")
+		return false
+	}
+	authMethod, creds := authParts[0], authParts[1]
+	if authMethod != "Basic" {
+		log.Infof("Auth method %s not supported", authMethod)
+		return false
+	}
+	decoded, err := base64.StdEncoding.DecodeString(creds)
+	if err != nil {
+		log.Info("Bad credentials")
+		log.Error(err)
+		return false
+	}
+	credParts := strings.Split(string(decoded), ":")
+	username, password := credParts[0], credParts[1]
+	return password == allowedUsers[username]
+}
+
 func getFileList(w http.ResponseWriter, r *http.Request) {
+	if !Authenticate(r) {
+		w.WriteHeader(http.StatusUnauthorized)
+		return
+	}
+
 	filenames, err := files.GetFileList(dataDirectory)
 	if err != nil {
 		log.Error(err)
