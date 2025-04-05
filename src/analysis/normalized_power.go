@@ -31,4 +31,10 @@ func NormalizedPower(rider *rider.RIDER, ride *models.RIDE_DATA) {
 	np = math.Pow(np, 0.25)
 	ride.Analysis.NormalizedPower = np
 
+	ftp := float64(rider.Attributes[0].FTP)
+	iff := np / ftp
+	tss := (float64(ride.Ride.RecIntSecs) * np * iff) / (ftp * 3600) * 100
+	ride.Analysis.IFF = iff
+	ride.Analysis.TSS = tss
+
 }

@@ -81,6 +81,9 @@ func readFitFile(fileName string) (*RIDE_DATA, error) {
 	log.Printf("Laps count: %d\n", len(activity.Laps))
 	log.Printf("Records count: %d\n", len(activity.Records))
 
+	ride.Ride.StartTime = activity.Activity.Timestamp.String()
+	ride.Ride.RecIntSecs = int(activity.Activity.TotalTimerTime / 1000)
+
 	for _, record := range activity.Records {
 		sample := RIDE_SAMPLE{
 			Secs:   uint64(record.TimestampUint32()),
