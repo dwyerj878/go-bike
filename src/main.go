@@ -128,6 +128,10 @@ func getFileList(w http.ResponseWriter, r *http.Request) {
 }
 
 func getFilename(w http.ResponseWriter, r *http.Request) {
+	if !Authenticate(r) {
+		w.WriteHeader(http.StatusUnauthorized)
+		return
+	}
 	if r.Method == http.MethodGet {
 		log.Debugf("Getting filename %s", fileName)
 		w.Write([]byte("{ \"file_name\" : \"" + fileName + "\" }"))
@@ -157,6 +161,10 @@ func getFilename(w http.ResponseWriter, r *http.Request) {
 }
 
 func getData(w http.ResponseWriter, r *http.Request) {
+	if !Authenticate(r) {
+		w.WriteHeader(http.StatusUnauthorized)
+		return
+	}
 	b, err := json.MarshalIndent(currentRide.Analysis, "", "  ")
 	if err != nil {
 		log.Error(err)
@@ -164,7 +172,8 @@ func getData(w http.ResponseWriter, r *http.Request) {
 	w.Write(b)
 }
 
-func chart(w http.ResponseWriter, _ *http.Request) {
+func chart(w http.ResponseWriter, r *http.Request) {
+
 	// create a new line instance
 	length := len(currentRide.Ride.Samples)
 	line := charts.NewLine()
