@@ -22,12 +22,7 @@ func ExecuteAnalysis(activeRider *rider.RIDER, ride *models.RIDE_DATA) {
 		AverageCadence,
 	}
 	for _, fnc := range analysisFunctions {
-		wg.Add(1)
-		go func(wg *sync.WaitGroup) {
-			defer wg.Done()
-			fnc(activeRider, ride)
-		}(&wg)
-
+		fnc(activeRider, ride)
 	}
 	wg.Wait()
 }
