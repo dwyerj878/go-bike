@@ -2,33 +2,41 @@
 
 <head>
     <title>Go Bike</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
     <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
     <script src="https://code.jquery.com/ui/1.14.1/jquery-ui.js"></script>
 
     <script src="https://go-echarts.github.io/go-echarts-assets/assets/echarts.min.js"></script>
     <script src="https://go-echarts.github.io/go-echarts-assets/assets/themes/infographic.js"></script>
     <link rel="stylesheet" href="https://code.jquery.com/ui/1.14.1/themes/base/jquery-ui.css">
+    <link rel="stylesheet" type="text/css" href="style.css" />
     <script>
         $(function () {
             console.log("ready")
             $("#tabs").tabs();
         });
-        
-    </script>
+        function show_page(page) {
+            if (page == "home") {
+                $("#home").show()
+                $("#activity").hide()
+                $("#workout").hide()
 
-</head>
+            } else if (page == "activity") {
+                $("#home").hide()
+                $("#activity").show()
+                $("#workout").hide()
+            } else {
+                $("#home").hide()
+                $("#activity").hide()
+                $("#workout").show()
+            }
 
-<body>
-    <div id="tabs">
-        <ul>
-            <li><a href="#chart">Chart</a></li>
-            <li><a href="#data">Data</a></li>
-            <li><a href="#tabs-3">Aenean lacinia</a></li>
-        </ul>
-
-        <div id="chart">
-            <div id="chart_content">
-                <script>
+        }
+        function read_file(filename) {
+            console.log("reading file [" + filename + "]")
+            $.post("/filename", JSON.stringify({ file_name: filename }), function (data, status, xhr) {
+                $.getJSON("/filename", function (data, status, xhr) {
+                    $("#file_name").text(data.file_name)
                     $("#chart_content").load("/chart", function (response, status, xhr) {
                         console.log("loading chart")
                         if (status === "error") {
@@ -36,40 +44,131 @@
                             console.log(msg + xhr.status + " " + xhr.statusText);
                         }
                     });
-            
-                    </script>
+                });
+            })
 
-            </div>          
-        </div>
-        <div id="data">
-            <div id="data_content">
-                <script>
-                    console.log("loading data")
-                    $.getJSON( "/data", function( data, status, xhr ) {                                           
-                        console.log("loading data " + status)
-                        str = JSON.stringify(data)
-                        console.log(str)
-                        $("#data_content").text(str)
-                    });                        
-                    </script>
+        }
 
-            </div>          
+    </script>
 
-        </div>
-        <div id="tabs-3">
-            <p>Mauris eleifend est et turpis. Duis id erat. Suspendisse potenti. Aliquam vulputate, pede vel vehicula
-                accumsan, mi neque rutrum erat, eu congue orci lorem eget lorem. Vestibulum non ante. Class aptent
-                taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Fusce sodales. Quisque eu
-                urna vel enim commodo pellentesque. Praesent eu risus hendrerit ligula tempus pretium. Curabitur lorem
-                enim, pretium nec, feugiat nec, luctus a, lacus.</p>
-            <p>Duis cursus. Maecenas ligula eros, blandit nec, pharetra at, semper at, magna. Nullam ac lacus. Nulla
-                facilisi. Praesent viverra justo vitae neque. Praesent blandit adipiscing velit. Suspendisse potenti.
-                Donec mattis, pede vel pharetra blandit, magna ligula faucibus eros, id euismod lacus dolor eget odio.
-                Nam scelerisque. Donec non libero sed nulla mattis commodo. Ut sagittis. Donec nisi lectus, feugiat
-                porttitor, tempor ac, tempor vitae, pede. Aenean vehicula velit eu tellus interdum rutrum. Maecenas
-                commodo. Pellentesque nec elit. Fusce in lacus. Vivamus a libero vitae lectus hendrerit hendrerit.</p>
-        </div>
+</head>
+
+<body>
+    <div id="header">
+        <h1><span class="heading_color">GoBike</span> Racing</h1>
     </div>
+
+    <div id="header_menu">
+        <ul class="navlist">
+            <li><a href="#">Log in</a></li>
+            <li><a href="#">Sign up!</a></li>
+        </ul>
+    </div>
+
+    <div id="container">
+        <div id="left">
+
+            <h4>Menu</h4>
+            <div id="navcontainer">
+                <ul id="navlist">
+                    <li id="active"><a href="#" id="current" onclick="show_page('home')">Home</a></li>
+                    <li><a href="#" onclick="show_page('activity')">Activity</a></li>
+                    <li><a href="#" onClick="show_page('workout')"">Workout</a></li>
+                    <li><a href=" #">Item four</a></li>
+                    <li><a href="#">Item five</a></li>
+                </ul>
+            </div>
+        </div>
+        <div id="right"><img src="images/bike1.png" alt="" width="255" height="200" class="thumbs" />
+        </div>
+        <div id="content">
+            <div id="home">
+                <script>
+                    $.getJSON("/datafiles", function (data, status, xhr) {
+                        for (var i = 0; i < data.length; i++) {
+                            var table = $("#files_list")
+                            var cell = $("<tr style='border: 1px solid black'><td  ><a onclick='read_file(\"" + data[i].file_name + "\")'>" + data[i].file_name + "</a></td><td>" + data[i].size + "</td><td>" + data[i].modify_date + "</td></tr>")
+                            table.append(cell);
+                        }
+                    });    
+                </script>
+                <div id="home_content">
+                    <table id="files_list" class="table" style="width: 100%; border: 1px solid black;">
+                        <thead>
+                            <tr>
+                                <td>file</td>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+
+            </div>
+
+
+
+            <div id="activity" hidden="true">
+                <div id="tabs">
+                    <ul style="height: 30;">
+                        <li><a href="#chart">Chart</a></li>
+                        <li><a href="#data">Data</a></li>
+                        <li><a href="#tabs-3">Aenean lacinia</a></li>
+                    </ul>
+
+                    <div id="tabs-1">
+                        <div id="chart">
+                            <div id="chart_content">
+                                <script>
+                                    $("#chart_content").load("/chart", function (response, status, xhr) {
+                                        console.log("loading chart")
+                                        if (status === "error") {
+                                            var msg = "Sorry but there was an error: ";
+                                            console.log(msg + xhr.status + " " + xhr.statusText);
+                                        }
+                                    });
+
+                                </script>
+
+                            </div>
+                        </div>
+                        <div id="data">
+                            <div id="data_content">
+                                <script>
+                                    console.log("loading data")
+                                    $.getJSON("/data", function (data, status, xhr) {
+                                        console.log("loading data " + status)
+                                        str = JSON.stringify(data)
+                                        console.log(str)
+                                        $("#data_content").text(str)
+                                    });                        
+                                </script>
+
+                            </div>
+
+                        </div>
+                        <div id="tabs-3">
+
+                        </div>
+                    </div>
+                </div>
+
+
+            </div>
+            <div id="workout" style="height: 300;">
+            </div>
+
+
+        </div>
+        <div id="footer">
+            <div id="file_name">
+                <script>
+                    $.getJSON("/filename", function (data, status, xhr) {
+                        $("#file_name").text(data.file_name)
+                    });    
+                </script>
+            </div>
+
+        </div>
 </body>
 
 </html>

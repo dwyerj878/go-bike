@@ -18,9 +18,9 @@ func NormalizedPower(rider *rider.RIDER, ride *models.RIDE_DATA) {
 	var grandTotal float64
 	var counter uint64
 
-	for i := 0; i < length; i++ {
+	for i := range length {
 		var total float64
-		for j := 0; j < 30; j++ {
+		for j := range 30 {
 			total += ride.Ride.Samples[i+j].Watts
 		}
 		vl := math.Pow(total/30.0, 4)
@@ -30,5 +30,11 @@ func NormalizedPower(rider *rider.RIDER, ride *models.RIDE_DATA) {
 	np := grandTotal / float64(counter)
 	np = math.Pow(np, 0.25)
 	ride.Analysis.NormalizedPower = np
+
+	ftp := float64(rider.Attributes[0].FTP)
+	iff := np / ftp
+	tss := (float64(ride.Ride.RecIntSecs) * np * iff) / (ftp * 3600) * 100
+	ride.Analysis.IFF = iff
+	ride.Analysis.TSS = tss
 
 }

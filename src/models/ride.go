@@ -69,13 +69,16 @@ type RIDE_ANALYSIS struct {
 	AverageSpeed    float64                       `json:"average_speed"`
 	ZoneIntervals   []RIDE_ANALYSIS_ZONE_INTERVAL `json:"zone_intervals"`
 	AverageCadence  float64                       `json:"average_cadence"`
+
+	TSS float64 `json:"tss"`
+	IFF float64 `json:"iff"`
 }
 
 type RIDE_ANALYSIS_FTP struct {
 	Over  uint64 `json:"over"`
 	Under uint64 `json:"under"`
 	Zero  uint64 `json:"zero"`
-	FTP   uint32 `json:"white"`
+	FTP   uint32 `json:"ftp"`
 }
 
 type RIDE_ANALYSIS_ZONE struct {
