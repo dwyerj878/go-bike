@@ -7,11 +7,15 @@
 
         {
             "name": "Launch Package",
-            "type": "go",
+            "type": "go", 
+            "buildFlags": [
+                "-race"
+            ],           
             "request": "launch",
+            
             "mode": "auto",
             "program": "src/main.go",
-            "args": [
+            "args": [                
                 //"/home/jcdwyer/tmp/2024_12_22_07_38_04.json"
                 "${workspaceFolder}/test_data/data/activity_20250202.fit",
                 "${workspaceFolder}/test_data/rider/rider.json",

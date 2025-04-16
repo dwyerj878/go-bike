@@ -24,7 +24,8 @@ Initially it is using json format as exported by Golden Cheetah but the intent i
 - [x] implement basic UI (jQuery)
 - [x] implement basic auth 
 - [ ] implement token auth
-= [ ] support auth in the UI (token ?)
+- [ ] support auth in the UI (token ?)
+- [x] docker build
 
 ## NP Formula
 - Step 1: Calculate the rolling average power with a window size of 30 seconds. Start at 30s and calculate the average of the previous 30s and repeat this for every second.
@@ -45,3 +46,12 @@ Initially it is using json format as exported by Golden Cheetah but the intent i
 ### args
 - data file
 - rider.json location 
+
+# Docker
+### build
+`docker build --progress=plain -t go-bike:latest`
+### run
+`docker run --name go-bike -p 18081:8081 go-bike`
+### cleanup
+`docker rm go-bike`
+`docker image rm go-bike`

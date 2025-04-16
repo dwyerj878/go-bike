@@ -3,4 +3,8 @@
     "go.coverShowCounts": true,
     "go.coverOnSingleTestFile": true,
     "go.coverMode": "atomic",
+    "go.buildTags": "",
+    "go.testFlags": [
+        "-race"
+    ],
 }

@@ -137,3 +137,115 @@ border-top: 1px solid #C2C2CA;
 	font-weight: bold;
 	font-size: 1.1em;
 }
+
+
+.dialog-overlay {
+    position: fixed; /* Sit on top of the page content */
+    display: none; /* Hidden by default */
+    width: 100%; /* Full width (cover the whole page) */
+    height: 100%; /* Full height */
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0,0,0,0.5); /* Black background with opacity */
+    z-index: 2; /* Specify a stack order in case you're using a different order for other elements */
+    cursor: pointer; /* Add a pointer on hover */
+    justify-content: center;
+    align-items: center;
+    display: flex; /* Use flexbox for centering */
+}
+
+.dialog-box {
+    background-color: #fefefe;
+    margin: auto; /* Automatic margins */
+    padding: 20px;
+    border: 1px solid #888;
+    width: 80%; /* Could be more or less, depending on screen size */
+    max-width: 400px; /* Maximum width */
+    box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2), 0 6px 20px 0 rgba(0,0,0,0.19);
+    text-align: center;
+    cursor: default; /* Reset cursor for the box itself */
+}
+
+.dialog-box h2 {
+    margin-top: 0;
+}
+
+.dialog-box form div {
+    margin-bottom: 15px;
+    text-align: left;
+}
+
+.dialog-box label {
+    display: block;
+    margin-bottom: 5px;
+}
+
+.dialog-box input[type="text"],
+.dialog-box input[type="password"] {
+    width: calc(100% - 16px); /* Adjust width considering padding */
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+.dialog-box button[type="submit"] {
+    background-color: #4CAF50;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 1em;
+}
+
+.dialog-box button[type="submit"]:hover {
+    background-color: #45a049;
+}
+
+.error-message {
+    color: red;
+    margin-bottom: 15px;
+    min-height: 1em; /* Prevent layout shift when message appears/disappears */
+}
+
+/* Style for main content area */
+#main-content {
+    padding: 20px;
+}
+
+/* Add other styles as needed */
+pre {
+    background-color: #eee;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    white-space: pre-wrap; /* Wrap long lines */
+    word-wrap: break-word; /* Break words if necessary */
+}
+
+#logout-button {
+    background-color: #f44336; /* Red */
+    color: white;
+    padding: 8px 15px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.9em;
+    float: right; /* Position it nicely */
+    margin-left: 10px;
+}
+
+#logout-button:hover {
+    background-color: #da190b;
+}
+
+#file-selector {
+    padding: 5px;
+    margin-right: 10px;
+}
+
+#load-file-button {
+     padding: 5px 10px;
+}
