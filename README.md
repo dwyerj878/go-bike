@@ -26,6 +26,7 @@ Initially it is using json format as exported by Golden Cheetah but the intent i
 - [ ] implement token auth
 - [ ] support auth in the UI (token ?)
 - [x] docker build
+- [x] migrate to gin : better middleware support
 
 ## NP Formula
 - Step 1: Calculate the rolling average power with a window size of 30 seconds. Start at 30s and calculate the average of the previous 30s and repeat this for every second.
@@ -40,7 +41,9 @@ Initially it is using json format as exported by Golden Cheetah but the intent i
 [logrus](github.com/sirupsen/logrus)
 [fit](github.com/muktihari/fit)
 
+# UI Url
 
+http://127.0.0.1:8081/app/
 
 # Running the app
 ### args

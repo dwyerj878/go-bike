@@ -7,10 +7,13 @@ import (
 	"bike/rider"
 	"encoding/base64"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"strings"
 
 	"net/http"
+
+	"github.com/gin-gonic/gin"
 
 	"github.com/go-echarts/go-echarts/v2/charts"
 	"github.com/go-echarts/go-echarts/v2/opts"
@@ -62,117 +65,112 @@ func main() {
 	currentRide = ride
 	log.Debug("http://127.0.0.1:8081/")
 
-	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) { http.ServeFile(w, r, "../static/index.html") })
-	http.HandleFunc("/style.css", func(w http.ResponseWriter, r *http.Request) { http.ServeFile(w, r, "../static/style.css") })
-	http.HandleFunc("/images/", getImage)
-	http.HandleFunc("/favicon.ico", getImage)
-	http.HandleFunc("/chart", chart)
-	http.HandleFunc("/data", getData)
-	http.HandleFunc("/filename", getFilename)
-	http.HandleFunc("/datafiles", getFileList)
+	engine := gin.New()
+	engine.GET("/chart", chart)
+	engine.GET("/data", Authenticate, getData)
+	engine.GET("/filename", Authenticate, getFilename)
+	engine.POST("/filename", Authenticate, setFilename)
+	engine.GET("/datafiles", Authenticate, getFileList)
+
+	//engine.Use(static.Serve("/", static.LocalFile("../static", false)))
+	engine.Static("/app", "../static/")
+	// engine.Static("/style.css", "../static/style.css")
+	// engine.Static("/images/", "../static/images")
+	engine.Static("/favicon.ico", "../static/images/favicon.ico")
+
 	log.Info("Starting server")
-	http.ListenAndServe(":8081", nil)
+	engine.Run(":8081")
 
 }
 
-func getImage(w http.ResponseWriter, r *http.Request) {
-	log.Debug(r.URL.Path[1:])
-	http.ServeFile(w, r, "../static/"+r.URL.Path[1:])
-}
-
-func Authenticate(r *http.Request) bool {
-	auth := r.Header.Get("Authorization")
+func Authenticate(context *gin.Context) {
+	auth := context.GetHeader("Authorization")
 	if auth == "" {
 		log.Info("No credentials supplied")
-		return false
+		context.AbortWithError(http.StatusUnauthorized, errors.New("Nope"))
+		return
 	}
 	authParts := strings.Split(auth, " ")
 	if len(authParts) != 2 {
 		log.Info("No credentials supplied")
-		return false
+		context.AbortWithError(http.StatusUnauthorized, errors.New("Nope"))
+		return
 	}
 	authMethod, creds := authParts[0], authParts[1]
 	if authMethod != "Basic" {
 		log.Infof("Auth method %s not supported", authMethod)
-		return false
+		context.AbortWithError(http.StatusUnauthorized, errors.New("Nope"))
+		return
 	}
 	decoded, err := base64.StdEncoding.DecodeString(creds)
 	if err != nil {
 		log.Info("Bad credentials")
 		log.Error(err)
-		return false
-	}
-	credParts := strings.Split(string(decoded), ":")
-	username, password := credParts[0], credParts[1]
-	return password == allowedUsers[username]
-}
-
-func getFileList(w http.ResponseWriter, r *http.Request) {
-	if !Authenticate(r) {
-		w.WriteHeader(http.StatusUnauthorized)
+		context.AbortWithError(http.StatusUnauthorized, errors.New("Nope"))
 		return
 	}
+
+	credParts := strings.Split(string(decoded), ":")
+	username, password := credParts[0], credParts[1]
+	if password == allowedUsers[username] {
+		context.Set("username", username)
+		context.Next()
+	} else {
+		log.Info("Bad credentials")
+		context.AbortWithError(http.StatusUnauthorized, errors.New("Nope"))
+	}
+}
+
+// func getFileList(w http.ResponseWriter, r *http.Request) {
+func getFileList(context *gin.Context) {
 
 	filenames, err := files.GetFileList(dataDirectory)
 	if err != nil {
 		log.Error(err)
-		w.Write([]byte(fmt.Sprintf("{\"error\" : \"%s\"}", err)))
 	}
+	context.JSON(http.StatusOK, filenames)
+}
 
-	out, err := json.MarshalIndent(filenames, "", "  ")
-	if err != nil {
+func getFilename(context *gin.Context) {
+	log.Debugf("Getting filename %s", fileName)
+	context.Writer.Write([]byte("{ \"file_name\" : \"" + fileName + "\" }"))
+	return
+}
+
+func setFilename(context *gin.Context) {
+	r := context.Request
+
+	var request models.LoadRideRequest
+	decoder := json.NewDecoder(r.Body)
+	if err := decoder.Decode(&request); err != nil {
 		log.Error(err)
-		w.Write([]byte(fmt.Sprintf("{\"error\" : \"%s\"}", err)))
+		return
 	}
-	w.Write(out)
+	fileName = request.Filename
+	if fileName == "" {
+		return
+	}
+	log.Debugf("Setting filename %s/%s", dataDirectory, fileName)
+	fullName := fmt.Sprintf("%s/%s", dataDirectory, fileName)
+	ride, err := models.Read(fullName)
+	if err != nil {
+		panic(err)
+	}
+	analysis.ExecuteAnalysis(activeRider, ride)
+	currentRide = ride
+
 }
 
-func getFilename(w http.ResponseWriter, r *http.Request) {
-	if !Authenticate(r) {
-		w.WriteHeader(http.StatusUnauthorized)
-		return
-	}
-	if r.Method == http.MethodGet {
-		log.Debugf("Getting filename %s", fileName)
-		w.Write([]byte("{ \"file_name\" : \"" + fileName + "\" }"))
-		return
-	}
-
-	if r.Method == http.MethodPost {
-		var request models.LoadRideRequest
-		decoder := json.NewDecoder(r.Body)
-		if err := decoder.Decode(&request); err != nil {
-			log.Error(err)
-			return
-		}
-		fileName = request.Filename
-		if fileName == "" {
-			return
-		}
-		log.Debugf("Setting filename %s/%s", dataDirectory, fileName)
-		fullName := fmt.Sprintf("%s/%s", dataDirectory, fileName)
-		ride, err := models.Read(fullName)
-		if err != nil {
-			panic(err)
-		}
-		analysis.ExecuteAnalysis(activeRider, ride)
-		currentRide = ride
-	}
-}
-
-func getData(w http.ResponseWriter, r *http.Request) {
-	if !Authenticate(r) {
-		w.WriteHeader(http.StatusUnauthorized)
-		return
-	}
+func getData(context *gin.Context) {
 	b, err := json.MarshalIndent(currentRide.Analysis, "", "  ")
 	if err != nil {
 		log.Error(err)
 	}
-	w.Write(b)
+	context.Writer.Write(b)
 }
 
-func chart(w http.ResponseWriter, r *http.Request) {
+func chart(context *gin.Context) {
+	w := context.Writer
 
 	// create a new line instance
 	length := len(currentRide.Ride.Samples)
