@@ -24,6 +24,8 @@ import (
 	"os"
 )
 
+const AuthFailure = "authorization failed"
+
 var currentRide *models.RIDE_DATA
 var fileName string
 var dataDirectory string
@@ -37,7 +39,6 @@ func init() {
 }
 
 func main() {
-
 	log.SetLevel(log.DebugLevel)
 	log.SetFormatter(
 		&log.TextFormatter{
@@ -72,10 +73,7 @@ func main() {
 	engine.POST("/filename", Authenticate, setFilename)
 	engine.GET("/datafiles", Authenticate, getFileList)
 
-	//engine.Use(static.Serve("/", static.LocalFile("../static", false)))
 	engine.Static("/app", "../static/")
-	// engine.Static("/style.css", "../static/style.css")
-	// engine.Static("/images/", "../static/images")
 	engine.Static("/favicon.ico", "../static/images/favicon.ico")
 
 	log.Info("Starting server")
@@ -95,29 +93,33 @@ func Authenticate(context *gin.Context) {
 	auth := context.GetHeader("Authorization")
 	if auth == "" {
 		log.Info("No credentials supplied")
-		context.AbortWithError(http.StatusUnauthorized, errors.New("Nope"))
+		context.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": errors.New(AuthFailure)})
 		return
 	}
 	authParts := strings.Split(auth, " ")
 	if len(authParts) != 2 {
 		log.Info("No credentials supplied")
-		context.AbortWithError(http.StatusUnauthorized, errors.New("Nope"))
+		context.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": errors.New(AuthFailure)})
 		return
 	}
 	authMethod, creds := authParts[0], authParts[1]
 	if authMethod != "Basic" {
 		log.Infof("Auth method %s not supported", authMethod)
-		context.AbortWithError(http.StatusUnauthorized, errors.New("Nope"))
+		context.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": errors.New(AuthFailure)})
 		return
 	}
 	decoded, err := base64.StdEncoding.DecodeString(creds)
 	if err != nil {
-		log.Info("Bad credentials")
 		log.Error(err)
-		context.AbortWithError(http.StatusUnauthorized, errors.New("Nope"))
+		context.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": errors.New(AuthFailure)})
 		return
 	}
+	if !strings.Contains(string(decoded), ":") {
+		log.Info("Invalid credentials format")
+		context.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": errors.New(AuthFailure)})
+		return
 
+	}
 	credParts := strings.Split(string(decoded), ":")
 	username, password := credParts[0], credParts[1]
 	if password == allowedUsers[username] {
@@ -125,7 +127,7 @@ func Authenticate(context *gin.Context) {
 		context.Next()
 	} else {
 		log.Info("Bad credentials")
-		context.AbortWithError(http.StatusUnauthorized, errors.New("Nope"))
+		context.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": errors.New(AuthFailure)})
 	}
 }
 
