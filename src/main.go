@@ -79,8 +79,13 @@ func main() {
 	engine.Static("/favicon.ico", "../static/images/favicon.ico")
 
 	log.Info("Starting server")
-	engine.Run(":8081")
 
+	banner, err := os.ReadFile("banner.txt")
+	if err != nil {
+		log.Error(err)
+	}
+	log.Info(string(banner))
+	engine.Run(":8081")
 }
 
 func Authenticate(context *gin.Context) {
