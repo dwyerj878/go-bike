@@ -36,8 +36,13 @@
         }
         function read_file(filename) {
             console.log("reading file [" + filename + "]")
-            $.post("/filename", JSON.stringify({ file_name: filename }), function (data, status, xhr) {
-                $.getJSON("/filename", function (data, status, xhr) {
+            makeAuthenticatedRequest({
+                    url: '/filename', // Use a simple GET endpoint for verification
+                    method: 'POST',
+                    dataType: 'json',
+                    data: JSON.stringify({ file_name: filename })
+                }).done(function (data) {
+
                     $("#file_name").text(data.file_name)
                     $("#chart_content").load("/chart", function (response, status, xhr) {
                         console.log("loading chart")
@@ -46,8 +51,14 @@
                             console.log(msg + xhr.status + " " + xhr.statusText);
                         }
                     });
+                }).fail(function (jqXHR, textStatus, errorThrown) {
+                    // Error handling (including 401) is done within makeAuthenticatedRequest
+                    // If it wasn't a 401, you might want additional specific error messages here.
+/*                    if (jqXHR.status !== 401) {
+                        $('#login-error').text('Login failed: ' + (errorThrown || textStatus));
+                        clearAuth(); // Clear the tentative auth if login failed for other reasons
+                    }*/
                 });
-            })
 
         }
 
@@ -108,6 +119,12 @@
         }
 
         $(document).ready(function () {
+            auth = sessionStorage.getItem('bikeAuth');
+            if (auth) {
+                hideLoginDialog();
+                return
+            }
+
 
             $('#login-form').on('submit', function (event) {
                 event.preventDefault(); // Prevent default form submission
