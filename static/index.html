@@ -36,6 +36,15 @@
         }
         function read_file(filename) {
             console.log("reading file [" + filename + "]")
+            $("#files_list tbody tr").each(function(){
+                let row = $(this)
+                if (row.find("td:first-child").text() == filename)
+                    row.css("background-color", "red")
+                else
+                    row.css("background-color", "white")
+            })
+            
+
             makeAuthenticatedRequest({
                     url: '/filename', // Use a simple GET endpoint for verification
                     method: 'POST',
@@ -218,7 +227,7 @@
                 }).done(function (data, status, xhr) {
                         for (var i = 0; i < data.length; i++) {
                             var table = $("#files_list")
-                            var cell = $("<tr style='border: 1px solid black'><td  ><a onclick='read_file(\"" + data[i].file_name + "\")'>" + data[i].file_name + "</a></td><td>" + data[i].size + "</td><td>" + data[i].modify_date + "</td></tr>")
+                            var cell = $("<tr style='border: 1px solid black;'><td  ><a onclick='read_file(\"" + data[i].file_name + "\")'>" + data[i].file_name + "</a></td><td>" + data[i].size + "</td><td>" + data[i].modify_date + "</td></tr>")
                             table.append(cell);
                         }
                     });    
