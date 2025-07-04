@@ -13,12 +13,12 @@ func TestAverageSpeed(t *testing.T) {
 
 	testCases := []struct {
 		name          string
-		samples       []models.RIDE_SAMPLE
+		samples       []models.RideSample
 		expectedSpeed float64
 	}{
 		{
 			name: "Valid Samples",
-			samples: []models.RIDE_SAMPLE{
+			samples: []models.RideSample{
 				{Kph: 10},
 				{Kph: 20},
 				{Kph: 30},
@@ -29,12 +29,12 @@ func TestAverageSpeed(t *testing.T) {
 		},
 		{
 			name:          "No Valid Samples",
-			samples:       []models.RIDE_SAMPLE{{Kph: 0}, {Kph: 0}, {Kph: 0}},
+			samples:       []models.RideSample{{Kph: 0}, {Kph: 0}, {Kph: 0}},
 			expectedSpeed: 0,
 		},
 		{
 			name: "Single Valid Sample",
-			samples: []models.RIDE_SAMPLE{
+			samples: []models.RideSample{
 				{Kph: 0},
 				{Kph: 15},
 				{Kph: 0},
@@ -43,7 +43,7 @@ func TestAverageSpeed(t *testing.T) {
 		},
 		{
 			name: "All valid",
-			samples: []models.RIDE_SAMPLE{
+			samples: []models.RideSample{
 				{Kph: 10},
 				{Kph: 20},
 				{Kph: 30},
@@ -53,15 +53,15 @@ func TestAverageSpeed(t *testing.T) {
 		},
 		{
 			name:          "Empty samples",
-			samples:       []models.RIDE_SAMPLE{},
+			samples:       []models.RideSample{},
 			expectedSpeed: 0,
 		},
 	}
 
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
-			ride := models.RIDE_DATA{
-				Ride: models.RIDE{
+			ride := models.RideData{
+				Ride: models.Ride{
 					Samples: tc.samples,
 				},
 			}

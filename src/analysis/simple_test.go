@@ -12,9 +12,9 @@ import (
 
 func TestTemperature(t *testing.T) {
 	log.Debug("Test Temperature")
-	ride := models.RIDE_DATA{
-		Ride: models.RIDE{
-			Samples: []models.RIDE_SAMPLE{
+	ride := models.RideData{
+		Ride: models.Ride{
+			Samples: []models.RideSample{
 				{Temp: 1},
 				{Temp: 100},
 				{Temp: 22},
@@ -32,9 +32,9 @@ func TestTemperature(t *testing.T) {
 
 func TestFTPTimes(t *testing.T) {
 	log.Debug("Test FTP Times")
-	ride := models.RIDE_DATA{
-		Ride: models.RIDE{
-			Samples: []models.RIDE_SAMPLE{
+	ride := models.RideData{
+		Ride: models.Ride{
+			Samples: []models.RideSample{
 				{Watts: 1},
 				{Watts: 100},
 				{Watts: 99},
@@ -65,9 +65,9 @@ func TestFTPTimes(t *testing.T) {
 
 func TestPowerZoneTimes(t *testing.T) {
 	log.Debug("Test Zone Times")
-	ride := models.RIDE_DATA{
-		Ride: models.RIDE{
-			Samples: []models.RIDE_SAMPLE{
+	ride := models.RideData{
+		Ride: models.Ride{
+			Samples: []models.RideSample{
 				{Watts: 1},
 				{Watts: 11},
 				{Watts: 30},
@@ -108,9 +108,9 @@ func TestPowerZoneTimes(t *testing.T) {
 
 func TestMaxPower(t *testing.T) {
 	log.Debug("Test FTP Times")
-	ride := models.RIDE_DATA{
-		Ride: models.RIDE{
-			Samples: []models.RIDE_SAMPLE{
+	ride := models.RideData{
+		Ride: models.Ride{
+			Samples: []models.RideSample{
 				{Watts: 1},
 				{Watts: 100},
 				{Watts: 99},
@@ -128,9 +128,9 @@ func TestMaxPower(t *testing.T) {
 
 func TestHeartRateZoneTimes(t *testing.T) {
 	log.Debug("Test Zone Times")
-	ride := models.RIDE_DATA{
-		Ride: models.RIDE{
-			Samples: []models.RIDE_SAMPLE{
+	ride := models.RideData{
+		Ride: models.Ride{
+			Samples: []models.RideSample{
 				{Hr: 1},
 				{Hr: 11},
 				{Hr: 30},

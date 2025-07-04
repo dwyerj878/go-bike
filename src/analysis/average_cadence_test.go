@@ -13,12 +13,12 @@ func TestAverageCadence(t *testing.T) {
 
 	testCases := []struct {
 		name            string
-		samples         []models.RIDE_SAMPLE
+		samples         []models.RideSample
 		expectedCadence float64
 	}{
 		{
 			name: "Valid Samples",
-			samples: []models.RIDE_SAMPLE{
+			samples: []models.RideSample{
 				{Cad: 100},
 				{Cad: 200},
 				{Cad: 300},
@@ -29,12 +29,12 @@ func TestAverageCadence(t *testing.T) {
 		},
 		{
 			name:            "No Valid Samples",
-			samples:         []models.RIDE_SAMPLE{{Cad: 0}, {Cad: 0}, {Cad: 0}},
+			samples:         []models.RideSample{{Cad: 0}, {Cad: 0}, {Cad: 0}},
 			expectedCadence: 0,
 		},
 		{
 			name: "Single Valid Sample",
-			samples: []models.RIDE_SAMPLE{
+			samples: []models.RideSample{
 				{Cad: 0},
 				{Cad: 150},
 				{Cad: 0},
@@ -43,7 +43,7 @@ func TestAverageCadence(t *testing.T) {
 		},
 		{
 			name: "All valid",
-			samples: []models.RIDE_SAMPLE{
+			samples: []models.RideSample{
 				{Cad: 100},
 				{Cad: 200},
 				{Cad: 300},
@@ -53,12 +53,12 @@ func TestAverageCadence(t *testing.T) {
 		},
 		{
 			name:            "Empty samples",
-			samples:         []models.RIDE_SAMPLE{},
+			samples:         []models.RideSample{},
 			expectedCadence: 0,
 		},
 		{
 			name: "Some negatives samples",
-			samples: []models.RIDE_SAMPLE{
+			samples: []models.RideSample{
 				{Cad: -100},
 				{Cad: 200},
 				{Cad: 300},
@@ -68,7 +68,7 @@ func TestAverageCadence(t *testing.T) {
 		},
 		{
 			name: "Negative samples",
-			samples: []models.RIDE_SAMPLE{
+			samples: []models.RideSample{
 				{Cad: -100},
 				{Cad: -200},
 				{Cad: -300},
@@ -80,8 +80,8 @@ func TestAverageCadence(t *testing.T) {
 
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
-			ride := models.RIDE_DATA{
-				Ride: models.RIDE{
+			ride := models.RideData{
+				Ride: models.Ride{
 					Samples: tc.samples,
 				},
 			}

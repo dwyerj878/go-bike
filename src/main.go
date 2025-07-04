@@ -21,7 +21,7 @@ import (
 	"os"
 )
 
-var currentRide *models.RIDE_DATA
+var currentRide *models.RideData
 var fileName string
 var dataDirectory string
 var activeRider *rider.RIDER

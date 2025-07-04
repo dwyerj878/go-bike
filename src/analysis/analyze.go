@@ -5,8 +5,8 @@ import (
 	"bike/rider"
 )
 
-func ExecuteAnalysis(activeRider *rider.RIDER, ride *models.RIDE_DATA) {
-	analysisFunctions := []func(*rider.RIDER, *models.RIDE_DATA){
+func ExecuteAnalysis(activeRider *rider.RIDER, ride *models.RideData) {
+	analysisFunctions := []func(*rider.RIDER, *models.RideData){
 		PowerZoneTimes,
 		FTPTimes,
 		Temperature,
