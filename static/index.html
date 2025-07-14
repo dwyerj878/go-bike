@@ -11,7 +11,7 @@
     <link rel="stylesheet" href="https://code.jquery.com/ui/1.14.1/themes/base/jquery-ui.css">
     <link rel="stylesheet" type="text/css" href="style.css" />
     <script>
-        let currentAuth = null;
+//        let currentAuth = null;
 
         $(function () {
             console.log("ready")
@@ -36,19 +36,36 @@
         }
         function read_file(filename) {
             console.log("reading file [" + filename + "]")
-            $.post("/filename", JSON.stringify({ file_name: filename }), function (data, status, xhr) {
-                $.getJSON("/filename", function (data, status, xhr) {
-                    $("#file_name").text(data.file_name)
-                    $("#chart_content").load("/chart", function (response, status, xhr) {
-                        console.log("loading chart")
-                        if (status === "error") {
-                            var msg = "Sorry but there was an error: ";
-                            console.log(msg + xhr.status + " " + xhr.statusText);
-                        }
-                    });
-                });
-            })
+            makeAuthenticatedRequest({
+                url: '/filename',
+                method: 'POST',
+                dataType: 'json',
+                data: JSON.stringify({ file_name: filename })
+            }).done(function (data, status, xhr) {
+                updatePage()
+            });
+        }
 
+        function updatePage() {
+            console.log("updating page")
+            makeAuthenticatedRequest({
+                url: '/filename',
+                method: 'GET',
+                dataType: 'json'
+            }).done(function (data, status, xhr) {
+                console.log("Getting file name")
+                $("#file_name").text(data.file_name)
+                console.log("Got Filename :  data.file_name")
+            })
+         
+            console.log("loading chart")
+            $("#chart_content").load("/chart", function (response, status, xhr) {
+            console.log("loading chart")
+            if (status === "error") {
+                var msg = "Sorry but there was an error: ";
+                console.log(msg + xhr.status + " " + xhr.statusText);
+            }
+            });
         }
 
         function makeAuthenticatedRequest(settings) {

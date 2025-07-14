@@ -9,7 +9,7 @@
             "name": "Launch Package",
             "type": "go", 
             "buildFlags": [
-                "-race"
+                
             ],           
             "request": "launch",
             

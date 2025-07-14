@@ -71,8 +71,20 @@ func main() {
 	http.HandleFunc("/filename", getFilename)
 	http.HandleFunc("/datafiles", getFileList)
 	log.Info("Starting server")
-	http.ListenAndServe(":8081", nil)
+	// add logging
 
+	http.ListenAndServe(":8081", loggingMiddleware(http.DefaultServeMux))
+}
+
+func loggingMiddleware(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		log.WithFields(log.Fields{
+			"method": r.Method,
+			"path":   r.URL.Path,
+			"remote": r.RemoteAddr,
+		}).Info("http request")
+		next.ServeHTTP(w, r)
+	})
 }
 
 func getImage(w http.ResponseWriter, r *http.Request) {
@@ -157,6 +169,7 @@ func getFilename(w http.ResponseWriter, r *http.Request) {
 		}
 		analysis.ExecuteAnalysis(activeRider, ride)
 		currentRide = ride
+		w.Write([]byte("{ \"file_name\" : \"" + fileName + "\" }"))
 	}
 }
 
