@@ -8,6 +8,10 @@
 
     <script src="https://go-echarts.github.io/go-echarts-assets/assets/echarts.min.js"></script>
     <script src="https://go-echarts.github.io/go-echarts-assets/assets/themes/infographic.js"></script>
+    
+    <script src=https://cdn.jsdelivr.net/npm/pretty-print-json@3.0/dist/pretty-print-json.min.js></script>
+
+    <link rel=stylesheet href=https://cdn.jsdelivr.net/npm/pretty-print-json@3.0/dist/css/pretty-print-json.css>
     <link rel="stylesheet" href="https://code.jquery.com/ui/1.14.1/themes/base/jquery-ui.css">
     <link rel="stylesheet" type="text/css" href="style.css" />
     <script>
@@ -36,38 +40,38 @@
         }
         function read_file(filename) {
             console.log("reading file [" + filename + "]")
-            $("#files_list tbody tr").each(function(){
+            $("#files_list tbody tr").each(function() {
                 let row = $(this)
                 if (row.find("td:first-child").text() == filename)
                     row.css("background-color", "red")
                 else
                     row.css("background-color", "white")
             })
-            
 
+            payload = JSON.stringify({ file_name: filename })
+            console.log(payload)
             makeAuthenticatedRequest({
-                    url: '/filename', // Use a simple GET endpoint for verification
-                    method: 'POST',
-                    dataType: 'json',
-                    data: JSON.stringify({ file_name: filename })
-                }).done(function (data) {
-
-                    $("#file_name").text(data.file_name)
-                    $("#chart_content").load("/chart", function (response, status, xhr) {
-                        console.log("loading chart")
-                        if (status === "error") {
-                            var msg = "Sorry but there was an error: ";
-                            console.log(msg + xhr.status + " " + xhr.statusText);
-                        }
-                    });
-                }).fail(function (jqXHR, textStatus, errorThrown) {
-                    // Error handling (including 401) is done within makeAuthenticatedRequest
-                    // If it wasn't a 401, you might want additional specific error messages here.
-/*                    if (jqXHR.status !== 401) {
-                        $('#login-error').text('Login failed: ' + (errorThrown || textStatus));
-                        clearAuth(); // Clear the tentative auth if login failed for other reasons
-                    }*/
+                url: '/filename', // Use a simple GET endpoint for verification
+                method: 'POST',
+                dataType: 'json',
+                data: payload
+            }).done(function (data) {
+                $("#file_name").text(data.file_name)
+                $("#chart_content").load("/chart", function (response, status, xhr) {
+                    console.log("loading chart")
+                    if (status === "error") {
+                        var msg = "Sorry but there was an error: ";
+                        console.log(msg + xhr.status + " " + xhr.statusText);
+                    }
                 });
+            }).fail(function (jqXHR, textStatus, errorThrown) {
+                // Error handling (including 401) is done within makeAuthenticatedRequest
+                // If it wasn't a 401, you might want additional specific error messages here.
+                /*                    if (jqXHR.status !== 401) {
+                                        $('#login-error').text('Login failed: ' + (errorThrown || textStatus));
+                                        clearAuth(); // Clear the tentative auth if login failed for other reasons
+                                    }*/
+            });
 
         }
 
@@ -220,11 +224,11 @@
         <div id="content">
             <div id="home">
                 <script>
-                 makeAuthenticatedRequest({
-                    url: '/datafiles', // Use a simple GET endpoint for verification
-                    method: 'GET',
-                    dataType: 'json'
-                }).done(function (data, status, xhr) {
+                    makeAuthenticatedRequest({
+                        url: '/datafiles', // Use a simple GET endpoint for verification
+                        method: 'GET',
+                        dataType: 'json'
+                    }).done(function (data, status, xhr) {
                         for (var i = 0; i < data.length; i++) {
                             var table = $("#files_list")
                             var cell = $("<tr style='border: 1px solid black;'><td  ><a onclick='read_file(\"" + data[i].file_name + "\")'>" + data[i].file_name + "</a></td><td>" + data[i].size + "</td><td>" + data[i].modify_date + "</td></tr>")
@@ -259,14 +263,14 @@
                         <div id="chart">
                             <div id="chart_content">
                                 <script>
-                                    $("#chart_content").load("/chart", 
-                                    function (response, status, xhr) {
-                                        console.log("loading chart")
-                                        if (status === "error") {
-                                            var msg = "Sorry but there was an error: ";
-                                            console.log(msg + xhr.status + " " + xhr.statusText);
-                                        }
-                                    });
+                                    $("#chart_content").load("/chart",
+                                        function (response, status, xhr) {
+                                            console.log("loading chart")
+                                            if (status === "error") {
+                                                var msg = "Sorry but there was an error: ";
+                                                console.log(msg + xhr.status + " " + xhr.statusText);
+                                            }
+                                        });
 
                                 </script>
 
@@ -277,14 +281,15 @@
                                 <script>
                                     console.log("loading data")
                                     makeAuthenticatedRequest({
-                                          url: '/data', // Use a simple GET endpoint for verification
+                                        url: '/data', // Use a simple GET endpoint for verification
                                         method: 'GET',
                                         dataType: 'json'
-                                        }).done(function (data, status, xhr) {
+                                    }).done(function (data, status, xhr) {
                                         console.log("loading data " + status)
                                         str = JSON.stringify(data)
                                         console.log(str)
-                                        $("#data_content").text(str)
+                                        $('#data_content').html(prettyPrintJson.toHtml(data));
+                                        // $("#data_content").text(str) 
                                     });                        
                                 </script>
 
@@ -308,10 +313,10 @@
             <div id="file_name">
                 <script>
                     makeAuthenticatedRequest({
-                    url: '/filename', // Use a simple GET endpoint for verification
-                    method: 'GET',
-                    dataType: 'json'
-                }).done(function (data, status, xhr) {
+                        url: '/filename', // Use a simple GET endpoint for verification
+                        method: 'GET',
+                        dataType: 'json'
+                    }).done(function (data, status, xhr) {
                         $("#file_name").text(data.file_name)
                     });    
                 </script>

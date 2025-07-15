@@ -23,6 +23,7 @@ Initially it is using json format as exported by Golden Cheetah but the intent i
 - [ ] implement trends and multi activity analysis
 - [x] implement basic UI (jQuery)
 - [x] implement basic auth 
+- [x] add basic auth to ui
 - [ ] implement token auth
 - [ ] support auth in the UI (token ?)
 - [x] docker build
