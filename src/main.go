@@ -2,21 +2,16 @@ package main
 
 import (
 	"bike/analysis"
-	"bike/files"
 	"bike/models"
 	"bike/rider"
+
+	"bike/routes"
 	"encoding/base64"
-	"encoding/json"
-	"fmt"
 	"strings"
 
 	"net/http"
 
 	"github.com/gin-gonic/gin"
-
-	"github.com/go-echarts/go-echarts/v2/charts"
-	"github.com/go-echarts/go-echarts/v2/opts"
-	"github.com/go-echarts/go-echarts/v2/types"
 
 	log "github.com/sirupsen/logrus"
 
@@ -25,10 +20,6 @@ import (
 
 const AuthFailure = "authorization failed"
 
-var currentRide *models.RIDE_DATA
-var fileName string
-var dataDirectory string
-var activeRider *rider.RIDER
 var allowedUsers map[string]string
 
 func init() {
@@ -48,29 +39,29 @@ func main() {
 	log.SetReportCaller(true)
 
 	log.Info(os.Args[1])
-	fileName = os.Args[1]
+	routes.FileName = os.Args[1]
 	riderFileName := os.Args[2]
-	dataDirectory = os.Args[3]
+	routes.DataDirectory = os.Args[3]
 	loadedRider, err := rider.ReadRiderData(riderFileName)
 	if err != nil {
 		log.Error(err)
 		panic(err)
 	}
-	activeRider = loadedRider
-	ride, err := models.Read(fileName)
+	routes.ActiveRider = loadedRider
+	ride, err := models.Read(routes.FileName)
 	if err != nil {
 		panic(err)
 	}
-	analysis.ExecuteAnalysis(activeRider, ride)
-	currentRide = ride
+	analysis.ExecuteAnalysis(routes.ActiveRider, ride)
+	routes.CurrentRide = ride
 	log.Debug("http://127.0.0.1:8081/")
 
 	engine := gin.New()
-	engine.GET("/chart", chart)
-	engine.GET("/data", Authenticate, getData)
-	engine.GET("/filename", Authenticate, getFilename)
-	engine.POST("/filename", Authenticate, setFilename)
-	engine.GET("/datafiles", Authenticate, getFileList)
+	engine.GET("/chart", routes.Chart)
+	engine.GET("/data", Authenticate, routes.GetData)
+	engine.GET("/filename", Authenticate, routes.GetFilename)
+	engine.POST("/filename", Authenticate, routes.SetFilename)
+	engine.GET("/datafiles", Authenticate, routes.GetFileList)
 
 	engine.Static("/app", "../static/")
 	engine.Static("/favicon.ico", "../static/images/favicon.ico")
@@ -128,96 +119,4 @@ func Authenticate(context *gin.Context) {
 		log.Info("Bad credentials")
 		context.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": AuthFailure})
 	}
-}
-
-// func getFileList(w http.ResponseWriter, r *http.Request) {
-func getFileList(context *gin.Context) {
-
-	filenames, err := files.GetFileList(dataDirectory)
-	if err != nil {
-		log.Error(err)
-	}
-	context.JSON(http.StatusOK, filenames)
-}
-
-func getFilename(context *gin.Context) {
-	log.Debugf("Getting filename %s", fileName)
-	context.Writer.Write([]byte("{ \"file_name\" : \"" + fileName + "\" }"))
-	return
-}
-
-func setFilename(context *gin.Context) {
-	r := context.Request
-
-	var request models.LoadRideRequest
-	decoder := json.NewDecoder(r.Body)
-	if err := decoder.Decode(&request); err != nil {
-		log.Error(err)
-		return
-	}
-	fileName = request.Filename
-	if fileName == "" {
-		return
-	}
-	log.Debugf("Setting filename %s/%s", dataDirectory, fileName)
-	fullName := fmt.Sprintf("%s/%s", dataDirectory, fileName)
-	ride, err := models.Read(fullName)
-	if err != nil {
-		panic(err)
-	}
-	analysis.ExecuteAnalysis(activeRider, ride)
-	currentRide = ride
-
-}
-
-func getData(context *gin.Context) {
-	b, err := json.MarshalIndent(currentRide.Analysis, "", "  ")
-	if err != nil {
-		log.Error(err)
-	}
-	context.Writer.Write(b)
-}
-
-func chart(context *gin.Context) {
-	w := context.Writer
-
-	// create a new line instance
-	length := len(currentRide.Ride.Samples)
-	line := charts.NewLine()
-	// set some global options like Title/Legend/ToolTip or anything else
-	line.SetGlobalOptions(
-
-		charts.WithInitializationOpts(opts.Initialization{Theme: types.ThemeInfographic, Width: "1200px", Height: "700px"}),
-		charts.WithTitleOpts(opts.Title{
-			Title:    "Speed vs Power",
-			Subtitle: fmt.Sprintf("Ride data %s", currentRide.Ride.StartTime),
-		}),
-		charts.WithYAxisOpts(
-			opts.YAxis{
-				SplitNumber: 2,
-				Max:         currentRide.Analysis.MaxWatts,
-				Min:         0,
-			}),
-		charts.WithXAxisOpts(
-			opts.XAxis{
-				Max: length,
-			}),
-	)
-
-	speed := make([]opts.LineData, length)
-	power := make([]opts.LineData, length)
-	for idx := range length {
-		sample := currentRide.Ride.Samples[idx]
-		speed[idx].Value = sample.Kph
-		power[idx].Value = sample.Watts
-	}
-
-	// Put data into instance
-	line.SetXAxis([]string{"0", "100", "200", "300", "400", "500", "600", "700", "800", "900", "1000"}).
-		AddSeries("Power", power).
-		AddSeries("Speed", speed).
-		SetSeriesOptions(
-			charts.WithLineChartOpts(opts.LineChart{Smooth: opts.Bool(true)}))
-
-	line.Render(w)
 }

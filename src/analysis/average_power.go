@@ -7,7 +7,7 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
-func AveragePower(rider *rider.RIDER, ride *models.RIDE_DATA) {
+func AveragePower(rider *rider.RIDER, ride *models.RideData) {
 	log.Info("Average Power")
 	var grandTotal float64
 	var counter uint64

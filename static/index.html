@@ -15,7 +15,7 @@
     <link rel="stylesheet" href="https://code.jquery.com/ui/1.14.1/themes/base/jquery-ui.css">
     <link rel="stylesheet" type="text/css" href="style.css" />
     <script>
-        let currentAuth = null;
+//        let currentAuth = null;
 
         $(function () {
             console.log("ready")
@@ -40,39 +40,36 @@
         }
         function read_file(filename) {
             console.log("reading file [" + filename + "]")
-            $("#files_list tbody tr").each(function() {
-                let row = $(this)
-                if (row.find("td:first-child").text() == filename)
-                    row.css("background-color", "red")
-                else
-                    row.css("background-color", "white")
-            })
-
-            payload = JSON.stringify({ file_name: filename })
-            console.log(payload)
             makeAuthenticatedRequest({
-                url: '/filename', // Use a simple GET endpoint for verification
+                url: '/filename',
                 method: 'POST',
                 dataType: 'json',
-                data: payload
-            }).done(function (data) {
-                $("#file_name").text(data.file_name)
-                $("#chart_content").load("/chart", function (response, status, xhr) {
-                    console.log("loading chart")
-                    if (status === "error") {
-                        var msg = "Sorry but there was an error: ";
-                        console.log(msg + xhr.status + " " + xhr.statusText);
-                    }
-                });
-            }).fail(function (jqXHR, textStatus, errorThrown) {
-                // Error handling (including 401) is done within makeAuthenticatedRequest
-                // If it wasn't a 401, you might want additional specific error messages here.
-                /*                    if (jqXHR.status !== 401) {
-                                        $('#login-error').text('Login failed: ' + (errorThrown || textStatus));
-                                        clearAuth(); // Clear the tentative auth if login failed for other reasons
-                                    }*/
+                data: JSON.stringify({ file_name: filename })
+            }).done(function (data, status, xhr) {
+                updatePage()
             });
+        }
 
+        function updatePage() {
+            console.log("updating page")
+            makeAuthenticatedRequest({
+                url: '/filename',
+                method: 'GET',
+                dataType: 'json'
+            }).done(function (data, status, xhr) {
+                console.log("Getting file name")
+                $("#file_name").text(data.file_name)
+                console.log("Got Filename :  data.file_name")
+            })
+         
+            console.log("loading chart")
+            $("#chart_content").load("/chart", function (response, status, xhr) {
+            console.log("loading chart")
+            if (status === "error") {
+                var msg = "Sorry but there was an error: ";
+                console.log(msg + xhr.status + " " + xhr.statusText);
+            }
+            });
         }
 
         function makeAuthenticatedRequest(settings) {

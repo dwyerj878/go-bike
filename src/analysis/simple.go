@@ -7,7 +7,7 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
-func FTPTimes(rider *rider.RIDER, ride *models.RIDE_DATA) {
+func FTPTimes(rider *rider.RIDER, ride *models.RideData) {
 	ftp := float64(rider.Attributes[0].FTP)
 	over := uint64(0)
 	under := uint64(0)
@@ -27,9 +27,9 @@ func FTPTimes(rider *rider.RIDER, ride *models.RIDE_DATA) {
 	ride.Analysis.FTP.Zero = zero
 }
 
-func PowerZoneTimes(rider *rider.RIDER, ride *models.RIDE_DATA) {
+func PowerZoneTimes(rider *rider.RIDER, ride *models.RideData) {
 	for zoneIdx, zone := range rider.Attributes[0].PowerZones {
-		zoneData := models.RIDE_ANALYSIS_ZONE{Zone: uint8(zoneIdx + 1), Count: 0, Min: zone.Min, Max: zone.Max}
+		zoneData := models.RideAnalysisZone{Zone: uint8(zoneIdx + 1), Count: 0, Min: zone.Min, Max: zone.Max}
 		ride.Analysis.PowerZones = append(ride.Analysis.PowerZones, zoneData)
 	}
 	var sampleCount uint64
@@ -47,7 +47,7 @@ func PowerZoneTimes(rider *rider.RIDER, ride *models.RIDE_DATA) {
 	}
 }
 
-func Temperature(rider *rider.RIDER, ride *models.RIDE_DATA) {
+func Temperature(rider *rider.RIDER, ride *models.RideData) {
 	min := float64(500)
 	max := float64(0)
 	for _, sample := range ride.Ride.Samples {
@@ -63,7 +63,7 @@ func Temperature(rider *rider.RIDER, ride *models.RIDE_DATA) {
 	ride.Analysis.MinTemp = min
 }
 
-func MaxPower(rider *rider.RIDER, ride *models.RIDE_DATA) {
+func MaxPower(rider *rider.RIDER, ride *models.RideData) {
 	max := float64(0)
 	for _, sample := range ride.Ride.Samples {
 		if sample.Watts > max {
@@ -74,9 +74,9 @@ func MaxPower(rider *rider.RIDER, ride *models.RIDE_DATA) {
 	ride.Analysis.MaxWatts = max
 }
 
-func HRZoneTimes(rider *rider.RIDER, ride *models.RIDE_DATA) {
+func HRZoneTimes(rider *rider.RIDER, ride *models.RideData) {
 	for zoneIdx, zone := range rider.Attributes[0].HRZones {
-		zoneData := models.RIDE_ANALYSIS_ZONE{Zone: uint8(zoneIdx + 1), Count: 0, Min: zone.Min, Max: zone.Max}
+		zoneData := models.RideAnalysisZone{Zone: uint8(zoneIdx + 1), Count: 0, Min: zone.Min, Max: zone.Max}
 		ride.Analysis.HRZones = append(ride.Analysis.HRZones, zoneData)
 	}
 	var sampleCount uint64
