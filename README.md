@@ -47,9 +47,11 @@ Initially it is using json format as exported by Golden Cheetah but the intent i
 http://127.0.0.1:8081/app/
 
 # Running the app
-### args
-- data file
-- rider.json location 
+The application requires three command-line flags:
+
+* `-defaultRide`: Path to the default ride file to load on startup (e.g., `data/2024-05-12-10-10-10.json`).
+* `-riderFile`: Path to the rider's JSON data file (e.g., `data/rider.json`).
+* `-dataDirectory`: Path to the directory containing ride data files (e.g., `data`).
 
 # Docker
 ### build

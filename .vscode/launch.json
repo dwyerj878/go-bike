@@ -17,8 +17,11 @@
             "program": "src/main.go",
             "args": [                
                 //"/home/jcdwyer/tmp/2024_12_22_07_38_04.json"
+                "--defaultRide",
                 "${workspaceFolder}/test_data/data/activity_20250202.fit",
+                "--riderFile",
                 "${workspaceFolder}/test_data/rider/rider.json",
+                "--dataDirectory",
                 "${workspaceFolder}/test_data/data"
                 ]
         }

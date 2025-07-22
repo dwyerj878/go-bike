@@ -7,6 +7,7 @@ import (
 
 	"bike/routes"
 	"encoding/base64"
+	"flag"
 	"strings"
 
 	"net/http"
@@ -38,11 +39,21 @@ func main() {
 		})
 	log.SetReportCaller(true)
 
-	log.Info(os.Args[1])
-	routes.FileName = os.Args[1]
-	riderFileName := os.Args[2]
-	routes.DataDirectory = os.Args[3]
-	loadedRider, err := rider.ReadRiderData(riderFileName)
+	defaultRide := flag.String("defaultRide", "", "Path to the default ride file to load on startup.")
+	riderFile := flag.String("riderFile", "", "Path to the rider's JSON data file.")
+	dataDirectory := flag.String("dataDirectory", "", "Path to the directory containing ride data files.")
+	flag.Parse()
+
+	if *defaultRide == "" || *riderFile == "" || *dataDirectory == "" {
+		log.Error("Missing required flags: defaultRide, riderFile, and dataDirectory must be provided.")
+		flag.Usage()
+		os.Exit(1)
+	}
+
+	log.Infof("Loading default ride: %s", *defaultRide)
+	routes.FileName = *defaultRide
+	routes.DataDirectory = *dataDirectory
+	loadedRider, err := rider.ReadRiderData(*riderFile)
 	if err != nil {
 		log.Error(err)
 		panic(err)
@@ -56,19 +67,26 @@ func main() {
 	routes.CurrentRide = ride
 	log.Debug("http://127.0.0.1:8081/")
 
-	engine := gin.New()
+	engine := gin.Default()
+	CreateRoutes(engine)
+	AddStaticContent(engine)
+
+	log.Info("Starting server")
+	showBanner()
+	engine.Run(":8081")
+}
+
+func AddStaticContent(engine *gin.Engine) {
+	engine.Static("/app", "../static/")
+	engine.Static("/favicon.ico", "../static/images/favicon.ico")
+}
+
+func CreateRoutes(engine *gin.Engine) {
 	engine.GET("/chart", routes.Chart)
 	engine.GET("/data", Authenticate, routes.GetData)
 	engine.GET("/filename", Authenticate, routes.GetFilename)
 	engine.POST("/filename", Authenticate, routes.SetFilename)
 	engine.GET("/datafiles", Authenticate, routes.GetFileList)
-
-	engine.Static("/app", "../static/")
-	engine.Static("/favicon.ico", "../static/images/favicon.ico")
-
-	log.Info("Starting server")
-	showBanner()
-	engine.Run(":8081")
 }
 
 func showBanner() {
