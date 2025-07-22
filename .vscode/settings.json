@@ -5,6 +5,9 @@
     "go.coverMode": "atomic",
     "go.buildTags": "",
     "go.testFlags": [
-        "-race"
+        "-race",
+        "-coverprofile=coverage.out",
+        "-covermode=atomic",
+        "-coverpkg=./...",
     ],
 }

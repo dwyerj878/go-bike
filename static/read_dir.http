@@ -1,0 +1,24 @@
+.env
+user=admin
+password=password
+
+GET http://127.0.0.1:8081/datafiles
+Content-Type: application/json
+Authorization : Basic user:password
+
+GET http://127.0.0.1:8081/data
+Content-Type: application/json
+Authorization : Basic user:password
+
+GET http://127.0.0.1:8081/filename
+Content-Type: application/json
+Authorization : Basic user:password
+
+
+POST http://127.0.0.1:8081/filename 
+Content-Type: application/json
+Authorization : Basic user:password
+
+{ 
+    "file_name" : "18638057143_ACTIVITY.fit"
+}
