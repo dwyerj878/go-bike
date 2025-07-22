@@ -16,7 +16,7 @@ import (
 /*
 Read the ride data from a json file
 */
-func Read(fileName string) (*RIDE_DATA, error) {
+func Read(fileName string) (*RideData, error) {
 	if fileName == "" {
 		return nil, nil
 	}
@@ -33,14 +33,14 @@ func Read(fileName string) (*RIDE_DATA, error) {
 	return nil, fmt.Errorf("invalid file type %s", fileName)
 }
 
-func readJsonFile(fileName string) (*RIDE_DATA, error) {
+func readJsonFile(fileName string) (*RideData, error) {
 	file, err := os.Open(fileName)
 	if err != nil {
 		return nil, err
 	}
 	defer file.Close()
 	//var ride map[string]interface{}
-	var ride RIDE_DATA
+	var ride RideData
 	decoder := json.NewDecoder(file)
 
 	err = decoder.Decode(&ride)
@@ -51,10 +51,10 @@ func readJsonFile(fileName string) (*RIDE_DATA, error) {
 	return &ride, nil
 }
 
-func readFitFile(fileName string) (*RIDE_DATA, error) {
-	ride := RIDE_DATA{
-		Ride: RIDE{
-			Samples: []RIDE_SAMPLE{},
+func readFitFile(fileName string) (*RideData, error) {
+	ride := RideData{
+		Ride: Ride{
+			Samples: []RideSample{},
 		},
 	}
 	f, err := os.Open(fileName)
@@ -85,7 +85,7 @@ func readFitFile(fileName string) (*RIDE_DATA, error) {
 	ride.Ride.RecIntSecs = int(activity.Activity.TotalTimerTime / 1000)
 
 	for _, record := range activity.Records {
-		sample := RIDE_SAMPLE{
+		sample := RideSample{
 			Secs:   uint64(record.TimestampUint32()),
 			Km:     record.DistanceScaled(),
 			Watts:  float64(record.Power),

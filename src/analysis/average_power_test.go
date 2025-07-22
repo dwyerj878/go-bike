@@ -13,12 +13,12 @@ func TestAveragePower(t *testing.T) {
 
 	testCases := []struct {
 		name          string
-		samples       []models.RIDE_SAMPLE
+		samples       []models.RideSample
 		expectedPower float64
 	}{
 		{
 			name: "Valid Samples",
-			samples: []models.RIDE_SAMPLE{
+			samples: []models.RideSample{
 				{Watts: 100},
 				{Watts: 200},
 				{Watts: 300},
@@ -29,12 +29,12 @@ func TestAveragePower(t *testing.T) {
 		},
 		{
 			name:          "No Valid Samples",
-			samples:       []models.RIDE_SAMPLE{{Watts: 0}, {Watts: 0}, {Watts: 0}},
+			samples:       []models.RideSample{{Watts: 0}, {Watts: 0}, {Watts: 0}},
 			expectedPower: 0,
 		},
 		{
 			name: "Single Valid Sample",
-			samples: []models.RIDE_SAMPLE{
+			samples: []models.RideSample{
 				{Watts: 0},
 				{Watts: 150},
 				{Watts: 0},
@@ -43,7 +43,7 @@ func TestAveragePower(t *testing.T) {
 		},
 		{
 			name: "All valid",
-			samples: []models.RIDE_SAMPLE{
+			samples: []models.RideSample{
 				{Watts: 100},
 				{Watts: 200},
 				{Watts: 300},
@@ -53,15 +53,15 @@ func TestAveragePower(t *testing.T) {
 		},
 		{
 			name:          "Empty samples",
-			samples:       []models.RIDE_SAMPLE{},
+			samples:       []models.RideSample{},
 			expectedPower: 0,
 		},
 	}
 
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
-			ride := models.RIDE_DATA{
-				Ride: models.RIDE{
+			ride := models.RideData{
+				Ride: models.Ride{
 					Samples: tc.samples,
 				},
 			}

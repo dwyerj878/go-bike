@@ -10,9 +10,9 @@ import (
 
 func TestTorque(t *testing.T) {
 	log.Debug("Test Torque")
-	ride := models.RIDE_DATA{
-		Ride: models.RIDE{
-			Samples: []models.RIDE_SAMPLE{
+	ride := models.RideData{
+		Ride: models.Ride{
+			Samples: []models.RideSample{
 				{Watts: 270, Cad: 90},
 				{Watts: 100, Cad: 100},
 				{Watts: 600, Cad: 120},
