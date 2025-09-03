@@ -27,7 +27,7 @@ jobs:
     - name: Test with Coverage
       run: |
         cd src
-        go test -v -coverprofile=coverage.out -covermode=atomic ./...
+        go test -v -coverprofile=coverage.out -covermode=count ./...
 
     - name: Generate HTML Coverage Report
       run: |

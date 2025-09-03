@@ -1,0 +1,51 @@
+{
+	"name": "Go Bike",
+	"dockerComposeFile": [
+		"docker-compose.yaml"
+	],
+	"service": "app",
+	"workspaceFolder": "/home/dev/workspace", // The path inside the container where your project files will be mounted
+	"shutdownAction": "stopCompose", // Action to take when the dev container is closed
+	"forwardPorts": [
+		3000,
+		2345
+	],
+	"customizations": {
+		"vscode": {
+			"settings": {
+				"go.toolsManagement.checkForUpdates": "local",
+				"go.useLanguageServer": true,
+				"go.gopath": "/home/dev/go",
+				"go.goroot": "/usr/local/go",
+				"[go]": {
+					"editor.formatOnSave": true,
+					"editor.codeActionsOnSave": {
+						"source.organizeImports": true
+					}
+				}
+			},
+			"extensions": [
+				"golang.go",
+				"ms-azuretools.vscode-docker",
+				"mutantdino.resourcemonitor",
+				"anweber.vscode-httpyac",
+				"gruntfuggly.todo-tree",
+				"github.github-vscode-theme",
+				"github.vscode-github-actions"
+			]
+		}		
+	},	
+	"updateRemoteUserUID": true,
+	"features": {
+		"ghcr.io/devcontainers/features/docker-in-docker": {
+			"enabled": true
+		}		
+	},	
+	"mounts": [
+		"source=${localWorkspaceFolder},target=/home/dev/workspace,type=bind,Z"
+	],	
+	
+	"containerUser": "dev"
+	// "remoteUser" : "dev"
+	//"postCreateCommand": "go mod download"
+}

@@ -1,0 +1,10 @@
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: gobike-app
+#    volumes:
+#      - .:/home/dev/workspace:delegated
+    command: sleep infinity
+  
