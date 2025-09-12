@@ -73,7 +73,8 @@ func main() {
 
 	log.Info("Starting server")
 	showBanner()
-	engine.Run(":8081")
+	//engine.Run(":8081")
+	engine.RunTLS(":8443", "cert/server.crt", "cert/server.key")
 }
 
 func AddStaticContent(engine *gin.Engine) {
