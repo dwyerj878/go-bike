@@ -10,4 +10,5 @@
         "-covermode=atomic",
         "-coverpkg=./...",
     ],
+    "git.enableCommitSigning": true,
 }
