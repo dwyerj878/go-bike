@@ -62,3 +62,11 @@ The application requires three command-line flags:
 ### cleanup
 `docker rm go-bike`
 `docker image rm go-bike`
+
+
+
+## Devcontainers
+
+```
+ devpod build git@github.com:dwyerj878/go-bike.git  --devcontainer-image mcr.microsoft.com/devcontainers/go:latest --debug
+ ```
