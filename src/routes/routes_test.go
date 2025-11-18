@@ -68,8 +68,8 @@ func (s *RoutesTestSuite) SetupTest() {
 
 	// Set up initial state for global variables
 	FileName = "initial_ride.fit"
-	ActiveRider = &rider.RIDER{
-		Attributes: []rider.RIDER_ATTRIBUTES{
+	ActiveRider = &rider.Rider{
+		Attributes: []rider.Attributes{
 			{FTP: 250, MaxHR: 190},
 		},
 	}

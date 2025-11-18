@@ -21,7 +21,7 @@ var CurrentRide *models.RideData
 
 var FileName string
 var DataDirectory string
-var ActiveRider *rider.RIDER
+var ActiveRider *rider.Rider
 
 // func getFileList(w http.ResponseWriter, r *http.Request) {
 func GetFileList(context *gin.Context) {

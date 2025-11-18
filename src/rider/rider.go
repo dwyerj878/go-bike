@@ -2,23 +2,23 @@ package rider
 
 import "time"
 
-type RIDER struct {
-	Name       string             `json:"name"`
-	BirthDate  JsonTime           `json:"birthdate"`
-	Weight     float64            `json:"weight"`
-	Attributes []RIDER_ATTRIBUTES `json:"attributes"`
+type Rider struct {
+	Name       string       `json:"name"`
+	BirthDate  JsonTime     `json:"birthdate"`
+	Weight     float64      `json:"weight"`
+	Attributes []Attributes `json:"attributes"`
 }
 
-type RIDER_ATTRIBUTES struct {
-	FromDate   JsonTime     `json:"from_date"`
-	FTP        uint32       `json:"ftp"`
-	CP         uint32       `json:"critical_power"`
-	MaxHR      uint32       `json:"max_hr"`
-	PowerZones []RIDER_ZONE `json:"power_zones,omitempty"`
-	HRZones    []RIDER_ZONE `json:"hr_zones,omitempty"`
+type Attributes struct {
+	FromDate   JsonTime `json:"from_date"`
+	FTP        uint32   `json:"ftp"`
+	CP         uint32   `json:"critical_power"`
+	MaxHR      uint32   `json:"max_hr"`
+	PowerZones []Zone   `json:"power_zones,omitempty"`
+	HRZones    []Zone   `json:"hr_zones,omitempty"`
 }
 
-type RIDER_ZONE struct {
+type Zone struct {
 	Min uint32 `json:"min"`
 	Max uint32 `json:"max"`
 }

@@ -7,7 +7,7 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
-func AverageSpeed(rider *rider.RIDER, ride *models.RideData) {
+func AverageSpeed(rider *rider.Rider, ride *models.RideData) {
 	log.Info("Average Speed")
 	var grandTotal float64
 	var counter uint64

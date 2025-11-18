@@ -8,7 +8,7 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
-func NormalizedPower(rider *rider.RIDER, ride *models.RideData) {
+func NormalizedPower(rider *rider.Rider, ride *models.RideData) {
 	log.Info("Normalized Power")
 	length := len(ride.Ride.Samples) - 29
 	if length <= 0 {

@@ -7,7 +7,7 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
-func Torque(rider *rider.RIDER, ride *models.RideData) {
+func Torque(rider *rider.Rider, ride *models.RideData) {
 	log.Info("Torque Power")
 
 	for idx, sample := range ride.Ride.Samples {

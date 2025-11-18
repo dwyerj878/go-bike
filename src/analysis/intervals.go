@@ -4,50 +4,100 @@ import (
 	"bike/models"
 	"bike/rider"
 	"math"
-
-	log "github.com/sirupsen/logrus"
 )
 
-func ZoneIntervals(rider *rider.RIDER, ride *models.RideData) {
-	log.Info("Intervals")
-	var intervals []models.RideAnalysisZoneInterval
+// A struct to hold interval data during processing
+type powerInterval struct {
+	startSampleIndex int
+	endSampleIndex   int
+	zoneIndex        int
+}
 
-	var currentZone int
-	var lastZone int
-	var count uint32
-	for _, sample := range ride.Ride.Samples {
-		for idx, zone := range rider.Attributes[0].PowerZones {
-			watts := uint32(math.Round(sample.Watts))
-			if watts >= zone.Min && watts <= zone.Max {
-				if idx != currentZone {
-					if count < 5 {
-						intervals[len(intervals)-1].Seconds += count
-					} else if len(intervals) > 0 && lastZone == currentZone {
-						intervals[len(intervals)-1].Seconds += count
-					} else {
-						intervals = append(intervals,
-							models.RideAnalysisZoneInterval{
-								Zone:    uint32(currentZone) + 1,
-								Seconds: count,
-							})
-						lastZone = currentZone
-					}
-					currentZone = idx
-					count = 1
-				} else {
-					count++
+// ZoneIntervals detects consecutive periods of time spent in a specific power zone.
+// An interval is defined as a minimum of 5 consecutive samples within a single power zone.
+func ZoneIntervals(theRider *rider.Rider, ride *models.RideData) {
+	if ride == nil || len(ride.Ride.Samples) == 0 {
+		return
+	}
+
+	// Assuming the latest rider attributes are the ones to use.
+	if theRider == nil || len(theRider.Attributes) == 0 {
+		return
+	}
+	powerZones := theRider.Attributes[0].PowerZones
+	samples := ride.Ride.Samples
+	recIntSecs := ride.Ride.RecIntSecs
+	if recIntSecs == 0 {
+		recIntSecs = 1 // Assume 1 second per sample if not specified
+	}
+
+	var foundIntervals []powerInterval
+	var currentInterval *powerInterval
+
+	for i, sample := range samples {
+		sampleWatts := uint32(math.Round(sample.Watts))
+		zoneIdx := getPowerZoneIndex(sampleWatts, powerZones)
+
+		if currentInterval == nil {
+			if zoneIdx != -1 {
+				// Start of a potential new interval
+				currentInterval = &powerInterval{
+					startSampleIndex: i,
+					zoneIndex:        zoneIdx,
 				}
-				continue
+			}
+		} else {
+			// We are in an interval. Check if it continues.
+			if zoneIdx != currentInterval.zoneIndex {
+				// Interval has ended at the previous sample.
+				currentInterval.endSampleIndex = i - 1
+
+				// Check if it meets the minimum length requirement.
+				if (currentInterval.endSampleIndex - currentInterval.startSampleIndex + 1) >= 5 {
+					foundIntervals = append(foundIntervals, *currentInterval)
+				}
+
+				// Reset and check if a new interval starts with the current sample.
+				if zoneIdx != -1 {
+					currentInterval = &powerInterval{
+						startSampleIndex: i,
+						zoneIndex:        zoneIdx,
+					}
+				} else {
+					currentInterval = nil
+				}
 			}
 		}
+	}
 
+	// Handle the case where an interval is ongoing at the end of the ride.
+	if currentInterval != nil {
+		currentInterval.endSampleIndex = len(samples) - 1
+		if (currentInterval.endSampleIndex - currentInterval.startSampleIndex + 1) >= 5 {
+			foundIntervals = append(foundIntervals, *currentInterval)
+		}
 	}
-	if count > 0 {
-		intervals = append(intervals,
-			models.RideAnalysisZoneInterval{
-				Zone:    uint32(currentZone) + 1,
-				Seconds: uint32(count),
-			})
+
+	// Convert the found intervals into the format expected by RideAnalysis.
+	analysisIntervals := make([]models.RideAnalysisZoneInterval, 0, len(foundIntervals))
+	for _, interval := range foundIntervals {
+		duration := uint32((interval.endSampleIndex - interval.startSampleIndex + 1) * recIntSecs)
+		analysisIntervals = append(analysisIntervals, models.RideAnalysisZoneInterval{
+			Zone:    uint32(interval.zoneIndex + 1), // Zones are 1-based
+			Seconds: duration,
+		})
 	}
-	ride.Analysis.ZoneIntervals = intervals
+
+	ride.Analysis.ZoneIntervals = analysisIntervals
+}
+
+// getPowerZoneIndex finds which power zone a given wattage falls into.
+// Returns the 0-based index of the zone, or -1 if not in any zone.
+func getPowerZoneIndex(watts uint32, zones []rider.Zone) int {
+	for i, zone := range zones {
+		if watts >= zone.Min && watts <= zone.Max {
+			return i
+		}
+	}
+	return -1
 }

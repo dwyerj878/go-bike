@@ -7,7 +7,7 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
-func AverageCadence(rider *rider.RIDER, ride *models.RideData) {
+func AverageCadence(rider *rider.Rider, ride *models.RideData) {
 	log.Info("Average Cadence")
 	var grandTotal float64
 	var counter uint64

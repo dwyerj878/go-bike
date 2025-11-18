@@ -8,13 +8,13 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
-func ReadRiderData(fileName string) (*RIDER, error) {
+func ReadRiderData(fileName string) (*Rider, error) {
 	file, err := os.Open(fileName)
 	if err != nil {
 		return nil, err
 	}
 	defer file.Close()
-	var rider RIDER
+	var rider Rider
 	parser := json.NewDecoder(file)
 	if err = parser.Decode(&rider); err != nil {
 		return nil, err
@@ -27,9 +27,9 @@ func ReadRiderData(fileName string) (*RIDER, error) {
 	return &rider, nil
 }
 
-func createPowerZones(rider *RIDER) {
+func createPowerZones(rider *Rider) {
 	ftp := rider.Attributes[0].FTP
-	rider.Attributes[0].PowerZones = []RIDER_ZONE{
+	rider.Attributes[0].PowerZones = []Zone{
 		{Min: 0, Max: calcPercent(ftp, 0.2)},
 		{Min: calcPercent(ftp, 0.2) + 1, Max: calcPercent(ftp, 0.5)},
 		{Min: calcPercent(ftp, 0.5) + 1, Max: calcPercent(ftp, 0.7)},
@@ -45,9 +45,9 @@ func calcPercent(base uint32, multiplier float64) uint32 {
 	return uint32(val)
 }
 
-func createHRZones(rider *RIDER) {
+func createHRZones(rider *Rider) {
 	maxHr := rider.Attributes[0].MaxHR
-	rider.Attributes[0].HRZones = []RIDER_ZONE{
+	rider.Attributes[0].HRZones = []Zone{
 		{Min: 0, Max: calcPercent(maxHr, 0.5)},
 		{Min: calcPercent(maxHr, 0.5) + 1, Max: calcPercent(maxHr, 0.6)},
 		{Min: calcPercent(maxHr, 0.6) + 1, Max: calcPercent(maxHr, 0.7)},

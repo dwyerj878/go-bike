@@ -44,8 +44,8 @@ func TestFTPTimes(t *testing.T) {
 			},
 		},
 	}
-	rider := rider.RIDER{
-		Attributes: []rider.RIDER_ATTRIBUTES{
+	rider := rider.Rider{
+		Attributes: []rider.Attributes{
 			{
 				FTP: 100,
 			},
@@ -78,10 +78,10 @@ func TestPowerZoneTimes(t *testing.T) {
 			},
 		},
 	}
-	rider := rider.RIDER{
-		Attributes: []rider.RIDER_ATTRIBUTES{
+	rider := rider.Rider{
+		Attributes: []rider.Attributes{
 			{
-				PowerZones: []rider.RIDER_ZONE{
+				PowerZones: []rider.Zone{
 					{Min: 0, Max: 10},
 					{Min: 11, Max: 20},
 					{Min: 21, Max: 30},
@@ -141,10 +141,10 @@ func TestHeartRateZoneTimes(t *testing.T) {
 			},
 		},
 	}
-	rider := rider.RIDER{
-		Attributes: []rider.RIDER_ATTRIBUTES{
+	rider := rider.Rider{
+		Attributes: []rider.Attributes{
 			{
-				HRZones: []rider.RIDER_ZONE{
+				HRZones: []rider.Zone{
 					{Min: 0, Max: 10},
 					{Min: 11, Max: 20},
 					{Min: 21, Max: 30},

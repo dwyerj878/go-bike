@@ -5,7 +5,7 @@ import (
 )
 
 func TestCreatePowerZones(t *testing.T) {
-	rider := RIDER{Attributes: []RIDER_ATTRIBUTES{{FTP: 100}}}
+	rider := Rider{Attributes: []Attributes{{FTP: 100}}}
 	createPowerZones(&rider)
 	if len(rider.Attributes[0].PowerZones) != 7 {
 		t.Error("Wrong number of zones")
@@ -20,7 +20,7 @@ func TestCreatePowerZones(t *testing.T) {
 }
 
 func TestCreateHRZones(t *testing.T) {
-	rider := RIDER{Attributes: []RIDER_ATTRIBUTES{{MaxHR: 200}}}
+	rider := Rider{Attributes: []Attributes{{MaxHR: 200}}}
 	createHRZones(&rider)
 	if len(rider.Attributes[0].HRZones) != 6 {
 		t.Error("Incorrect number of zones")
